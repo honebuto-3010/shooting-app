@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="apple-touch-icon" href="images/180-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0000aa">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遍路シューティング</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/title.css">
+</head>
+
+<body>
+    <div class="title-window">
+
+        <h1>SHIKOKU HENRO SHOOTING</h1>
+
+        <p>四国八十八ヶ所を巡礼せよ</p>
+
+        <button class="menu-btn" id="startBtn">
+            ▶ NEW GAME
+        </button>
+
+        <button class="menu-btn" id="continueBtn">
+            ▶ CONTINUE
+        </button>
+    </div>
+
+    <script src="js/title.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener("load", () => {
+
+                navigator.serviceWorker.register(
+                    "./service-worker.js"
+                );
+
+            });
+        }
+    </script>
+</body>
+
+</html>

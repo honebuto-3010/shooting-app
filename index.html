@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四國八十八ヶ所シューティング</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div id="game-container">
+
+        <!-- ゲームを描画するスクリーン -->
+        <canvas id="gameCanvas" width="450" height="650"></canvas>
+
+        <!--ポーズボタン&再開ボタン-->
+        <div id="game-buttons">
+            <button id="pauseBtn">⏸ PAUSE</button>
+
+            <!--タイトルヘ戻るボタン-->
+            <button id="titleBtn" style="display:none;">
+                🏠 TITLE
+            </button>
+        </div>
+
+        <!--リスタートボタン-->
+        <button id="restartBtn" style="display:none;">
+            🔄 RESTART
+        </button>
+
+        <!--左右の操作ボタン-->
+        <div id="controls">
+            <button id="leftBtn">◀</button>
+            <button id="rightBtn">▶</button>
+        </div>
+    </div>
+
+    <!-- 御朱印拝受モーダル -->
+    <div id="goshuinModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="stamp-frame">
+                <p class="modal-title">奉拝</p>
+                <div class="stamp-circle">御朱印</div>
+                <h2 id="modalTempleName">霊山寺</h2>
+                <p id="modalStageNum" class="modal-meta">第 一 番札所</p>
+            </div>
+            <button id="modalCloseBtn">次なる霊場へ進む</button>
+        </div>
+    </div>
+
+
+    <!-- JavaScriptファイルの読み込み -->
+    <script src="js/temples.js"></script>
+    <script src="js/sounds.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/save.js"></script>
+    <script src="js/game.js"></script>
+</body>
+
+</html>
