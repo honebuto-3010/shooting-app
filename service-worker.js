@@ -29,7 +29,7 @@ const urlsToCache = [
 
     "./images/192-icon.png",
     "./images/512-icon.png",
-    "180-icon.png"
+    "./images/180-icon.png"
 
 ];
 
