@@ -27,6 +27,10 @@ const urlsToCache = [
     "./sounds/reset.mp3",
     "./sounds/pause.mp3"
 
+    "./images/192-icon.png",
+    "./images/512-icon.png",
+    "180-icon.png"
+
 ];
 
 self.addEventListener("install", event => {
