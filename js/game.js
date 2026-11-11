@@ -573,10 +573,10 @@ function animate() {
     // 5. UI（情報）の表示
     ctx.font = "16px Arial, sans-serif";
     ctx.fillStyle = "white";
-    ctx.fillText(`第 ${currentStageIndex + 1} 番札所 【${getCurrentTempleName()}】`, 10, 30);
+    ctx.fillText(`第 ${currentStageIndex + 1} 番札所 【${getCurrentTempleName()}】`, 20, 30);
     
     if (bossSpawned === false) {
-        ctx.fillText(`煩悩退散: ${score} / 100`, 10, 55);
+        ctx.fillText(`煩悩退散: ${score} / 100`, 20, 55);
     } else {
         ctx.fillStyle = "#ff5555";
         ctx.fillText(`★ ボス出現：煩悩の主 ★`, 10, 55);
