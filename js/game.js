@@ -208,7 +208,7 @@ function spawnDaishi() {
         y: -40,
         width: 40,
         height: 40,
-        speed: 0.6
+        speed: 0.5
     });
 }
 // ==========================================
@@ -405,7 +405,7 @@ function animate() {
         if (spawnTimer % 40 === 0) {
             spawnEnemy();
         }
-        if (spawnTimer % 700 === 0) {
+        if (spawnTimer % 100 === 0) {
             spawnDaishi();
         }   
     } else {
