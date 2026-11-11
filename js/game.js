@@ -405,6 +405,9 @@ function animate() {
         if (spawnTimer % 40 === 0) {
             spawnEnemy();
         }
+        if (spawnTimer % 700 === 0) {
+            spawnDaishi();
+        }   
     } else {
         if (spawnTimer % 120 === 0) {
             spawnEnemy();
