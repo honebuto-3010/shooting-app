@@ -601,4 +601,6 @@ if (
     
 }
 
+playBGM("stage");
+
 animate();
