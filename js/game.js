@@ -575,6 +575,50 @@ function animate() {
             gameOver = true;
         }
 
+                // ==========================================
+        // お大師さまの移動と描画
+        // ==========================================
+        for (let i = daishiList.length - 1; i >= 0; i--) {
+
+            daishiList[i].y += daishiList[i].speed;
+
+            ctx.fillStyle = "#ffff66";
+
+            ctx.font =
+                "32px 'Hiragino Mincho ProN', 'MS Mincho', serif"
+            
+            ctx.fillText(
+                "仏",
+                daishiList[i].x,
+                daishiList[i].y + 30
+            );    
+
+            //弾の当たり判定
+            for (let j = bullets.length - 1; j >= 0; j--) {
+
+                if (checkCollision(bullets[j], daishiList[i])) {
+
+                    playSE("daishi");
+
+                     score = Math.max(0, score -10);
+
+                     bullets.splice(j, 1);
+                     daishiList.splice(i, 1);
+
+                     console.log("お大師さま命中 -10");
+
+                     break;
+                }
+            }
+
+            // 画面外へ出たら削除
+            if (daishiList[i] &&
+                daishiList[i].y > canvas.height
+            ) {
+                daishiList.splice(i, 1);
+            }
+        }
+        
         for (let j = bullets.length - 1; j >= 0; j--) {
             if (checkCollision(bullets[j], enemies[i])) {
 
