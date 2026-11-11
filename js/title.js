@@ -2,6 +2,12 @@ document
     .getElementById("startBtn")
     .addEventListener("click", () => {
 
+        playSE("pause");
+
+        setTimeout(() => {
+
+        stopBGM();
+
         localStorage.removeItem(
             "henroShooterSave"
         );
@@ -9,14 +15,24 @@ document
         window.location.href = 
             "index.html?newgame=true";
 
+        }, 500);        
+
     });
 
 document
     .getElementById("continueBtn")
     .addEventListener("click", () => {
 
+        playSE("pause");
+
+        setTimeout(() => {
+
+        stopBGM();
+
         window.location.href =
             "index.html?continue=true";
+
+        }, 500);        
 
     });
 
@@ -33,4 +49,26 @@ if (
 
     continueBtn.disabled = true;
 
-}    
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("クリック検出");
+});
+
+let titleBGMStarted = false;
+
+function startTitleBGM() {
+
+    if (titleBGMStarted) return;
+
+    titleBGMStarted = true;
+
+    console.log("タイトルBGM開始");
+
+    playBGM("title");
+}
+
+/*
+document.addEventListener("click", startTitleBGM, { once: true });
+document.addEventListener("touchstart", startTitleBGM, { once: true });*/
+document.addEventListener("pointerdown", startTitleBGM,{once: true});
