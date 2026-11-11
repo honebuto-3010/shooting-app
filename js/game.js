@@ -4,8 +4,8 @@
 
 const canvas = document.getElementById("gameCanvas");
 
-canvas.width = 420;
-canvas.height = 580;
+canvas.width = 480;
+canvas.height = 640;
 const ctx = canvas.getContext("2d");
 
 // ==========================================
