@@ -109,6 +109,10 @@ h1 {
     background-color: #2222cc;
 }
 
+#goshuinBtn:hover {
+    background-color: #2222cc;
+}
+
 @media (max-width: 480px) {
 
     h1 {
