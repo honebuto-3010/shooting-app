@@ -53,6 +53,15 @@ function stopBGM() {
 
     });
 }
+// =======================================
+//BGM全て再生停止
+// =======================================
+function stopAllBGM() {
+    object.values(bgm).forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+}
 
 //========================================
 //SE再生
