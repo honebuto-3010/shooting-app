@@ -165,7 +165,7 @@ if (restartBtn) {
 
         playSE("restart");
 
-        resetGame(true);
+        resetGame(false);
 
     });
 
