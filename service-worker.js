@@ -5,9 +5,11 @@ const urlsToCache = [
     "./",
     "./title.html",
     "./index.html",
+    "./goshuin.html"
 
     "./css/title.css",
     "./css/style.css",
+    "./css/goshuin.css"
 
     "./js/title.js",
     "./js/game.js",
@@ -16,6 +18,7 @@ const urlsToCache = [
     "./js/temples.js",
     "./js/save.js",
     "./js/sounds.js",
+    "./js/goshuin.js"
 
     "./sounds/stage.mp3",
     "./sounds/boss.mp3",
@@ -25,7 +28,8 @@ const urlsToCache = [
     "./sounds/clear.mp3",
     "./sounds/gameover.mp3",
     "./sounds/reset.mp3",
-    "./sounds/pause.mp3"
+    "./sounds/pause.mp3",
+    "./sounds/goshuin.mp3"
 
     "./images/192-icon.png",
     "./images/512-icon.png",
