@@ -85,3 +85,21 @@ window.addEventListerer("pagehide" , () => {
     stopBGM();
 });    
     
+const goshuinBtn =
+    document.getElementById("goshuinBtn");
+
+if (goshuinBtn) {
+
+    goshuinBtn.addEventListener("click" ,() => {
+
+        playSE("pause");
+
+        setTimeout(() => {
+
+        window.location.href = "goshuin.html";
+
+        },300);
+
+    });
+}    
+    
