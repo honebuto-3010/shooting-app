@@ -80,7 +80,7 @@ document.addEventListener("visibilitychange" , () => {
     }
 });
 
-window.addEventListerer("pagehide" , () => {
+window.addEventListener("pagehide" , () => {
 
     stopBGM();
 });    
