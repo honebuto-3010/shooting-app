@@ -497,6 +497,11 @@ function animate() {
 
                     if (!collectedGoshuin.includes(getCurrentTempleName())) {
                          collectedGoshuin.push(getCurrentTempleName());
+
+                        localStorage.setItem(
+                            "collectedGoshuin",
+                            JSON.stringfy(collectedGoshuin)
+                        );    
                     }
 
                     showGoshuinModal(); 
