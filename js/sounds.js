@@ -5,7 +5,7 @@ const bgm = {
     stage: new Audio("sounds/stage.mp3"),
     boss: new Audio("sounds/boss.mp3"),
     title: new Audio("sounds/title.mp3"),
-    goshuin: new Audio("sounds/goshuin.mp3)
+    goshuin: new Audio("sounds/goshuin.mp3")
 };
 
 bgm.stage.loop = true;
