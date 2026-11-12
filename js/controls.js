@@ -34,6 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         leftBtn.addEventListener("touchstart", (e) => {
             e.preventDefault();
+
+            if (!bgmStarted) {
+                bgmStarted = true;
+                playBGM("stage");
+            }
             moveLeft = true;
         });
 
@@ -50,6 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         rightBtn.addEventListener("touchstart", (e) => {
             e.preventDefault();
+
+            if (!bgmStarted) {
+                bgmStarted = true;
+                playBGM("stage");
+            }
             moveRight = true;
         });
 
