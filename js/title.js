@@ -72,3 +72,16 @@ function startTitleBGM() {
 document.addEventListener("click", startTitleBGM, { once: true });
 document.addEventListener("touchstart", startTitleBGM, { once: true });*/
 document.addEventListener("pointerdown", startTitleBGM,{once: true});
+
+document.addEventListener("visibilitychange" , () => {
+
+    if (document.hidden) {
+        stopBGM();
+    }
+});
+
+window.addEventListerer("pagehide" , () => {
+
+    stopBGM();
+});    
+    
