@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 titleBtn.style.display = "none";
 
-                playSE("restart");
+                playSE("pause");
 
                 if (bossSpawned) {
                     playBGM("boss");
@@ -163,7 +163,7 @@ if (restartBtn) {
 
     restartBtn.addEventListener("click", () => {
 
-        playSE("restart");
+        playSE("pause");
 
         resetGame(false);
 
