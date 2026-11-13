@@ -22,7 +22,6 @@ const se = {
     damage: new Audio("sounds/damage.mp3"),
     clear: new Audio("sounds/clear.mp3"),
     pause: new Audio("sounds/pause.mp3"),
-    restart: new Audio("sounds/restart.mp3"),
     gameOver: new Audio("sounds/gameover.mp3"),
     daishi: new Audio("sounds/daishi.mp3")
 };
