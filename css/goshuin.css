@@ -44,9 +44,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-
     padding: 10px;
     box-sizing: border-box;
+    touch-action: manipulation; /* ダブルタップによるズームを防止 */
+    overscroll-behavior: none;  /* 引っ張って更新（バウンス）を防止 */
 }
 
 /* ==========================================
