@@ -20,7 +20,7 @@ const urlsToCache = [
     "./js/sounds.js",
     "./js/goshuin.js",
 
-    "./sounds/stage.mp3",
+    /*"./sounds/stage.mp3",
     "./sounds/boss.mp3",
     "./sounds/shot.mp3",
     "./sounds/enemyHit.mp3",
@@ -29,7 +29,7 @@ const urlsToCache = [
     "./sounds/gameover.mp3",
     "./sounds/reset.mp3",
     "./sounds/pause.mp3",
-    "./sounds/goshuin.mp3",
+    "./sounds/goshuin.mp3", */
 
     "./images/192-icon.png",
     "./images/512-icon.png",
@@ -63,4 +63,18 @@ self.addEventListener("fetch", event => {
 
     );
 
+});
+
+self.addEventListener("activate", event => {
+    event.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(
+                keys.map(key => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
+                    }
+                })
+            )
+        )
+    );
 });
