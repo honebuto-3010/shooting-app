@@ -604,7 +604,7 @@ function animate() {
                 "32px 'Hiragino Mincho ProN', 'MS Mincho', serif"
             
             ctx.fillText(
-                "仏",
+                "空",
                 daishiList[i].x,
                 daishiList[i].y + 30
             );    
