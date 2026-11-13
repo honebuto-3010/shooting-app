@@ -33,6 +33,8 @@ body {
     background-color: #000;
     color: white;
     font-family: sans-serif;
+    touch-action: manipulation; /* ダブルタップによるズームを防止 */
+    overscroll-behavior: none;  /* 引っ張って更新（バウンス）を防止 */
 }
 
 /* =========================
