@@ -1,4 +1,4 @@
-const CACHE_NAME = "henro-shooting-v3";
+const CACHE_NAME = "henro-shooting-v4";
 
 const urlsToCache = [
 
