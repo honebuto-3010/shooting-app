@@ -500,7 +500,7 @@ function animate() {
 
                         localStorage.setItem(
                             "collectedGoshuin",
-                            JSON.stringfy(collectedGoshuin)
+                            JSON.stringify(collectedGoshuin)
                         );    
                     }
 
