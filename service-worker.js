@@ -5,7 +5,7 @@ const urlsToCache = [
     "./",
     "./title.html",
     "./index.html",
-    "./goshuin.html"
+    "./goshuin.html",
 
     "./css/title.css",
     "./css/style.css",
