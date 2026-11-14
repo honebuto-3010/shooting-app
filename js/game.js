@@ -600,7 +600,7 @@ function animate() {
         let bonnoText = "欲";
         if (enemies[i].x % 3 === 0) bonnoText = "怒";
         if (enemies[i].x % 3 === 1) bonnoText = "痴";
-        /*ctx.fillText(bonnoText, enemies[i].x + 5, enemies[i].y + 22);*/
+        
         ctx.fillStyle = "#ffffff";
         ctx.fillText(bonnoText, enemies[i].x + 5, enemies[i].y + 22);
         
