@@ -366,6 +366,9 @@ function animate() {
 
     // --- ここから通常のゲーム計算・描画 ---
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //背景画像の描画
+    updateBackground();
+    drawBackground();
 
     // 1. プレイヤーの移動処理
     if ((keys["ArrowLeft"] || keys["a"] || moveLeft) && player.x > 0) {
@@ -514,20 +517,37 @@ function animate() {
         if (gateState === "open") {
             if (spawnTimer % 50 === 0) {
                 bossBullets.push({
-                    x: boss.x + boss.width / 2 - 4,
+                    x: boss.x + boss.width / 2 - 8,
                     y: boss.y + boss.height,
-                    width: 8,
-                    height: 8,
-                    color: "#ff00a0"
+                    width: 16,
+                    height: 16,
+                    color: "#cc0000",
+                    text: "怨"
                 });
             }
         }
 
         for (let k = bossBullets.length - 1; k >= 0; k--) {
             bossBullets[k].y += bossBulletSpeed;
-            ctx.fillStyle = bossBullets[k].color;
-            ctx.fillRect(bossBullets[k].x, bossBullets[k].y, bossBullets[k].width, bossBullets[k].height);
+            
+            ctx.font = "20px serif";
+            ctx.lineWidth = 2;
+            // 白い縁
+            ctx.strokeStyle = "#ffffff";
+            ctx.strokeText(
+                bossBullets[k].text,
+                bossBullets[k].x,
+                bossBullets[k].y
+            );
 
+            // 赤い文字
+            ctx.fillStyle = bossBullets[k].color;
+            ctx.fillText(
+                bossBullets[k].text,
+                bossBullets[k].x,
+                bossBullets[k].y
+            );
+            
             if (checkCollision(player, bossBullets[k])) {
 
                 stopBGM();
@@ -580,8 +600,10 @@ function animate() {
         let bonnoText = "欲";
         if (enemies[i].x % 3 === 0) bonnoText = "怒";
         if (enemies[i].x % 3 === 1) bonnoText = "痴";
+        /*ctx.fillText(bonnoText, enemies[i].x + 5, enemies[i].y + 22);*/
+        ctx.fillStyle = "#ffffff";
         ctx.fillText(bonnoText, enemies[i].x + 5, enemies[i].y + 22);
-
+        
         if (checkCollision(player, enemies[i])) {
 
             stopBGM();
@@ -597,16 +619,29 @@ function animate() {
         for (let i = daishiList.length - 1; i >= 0; i--) {
 
             daishiList[i].y += daishiList[i].speed;
-
-            ctx.fillStyle = "#ffff66";
-
-            ctx.font =
-                "32px 'Hiragino Mincho ProN', 'MS Mincho', serif"
             
-            ctx.fillText(
-                "空",
-                daishiList[i].x,
-                daishiList[i].y + 30
+            ctx.fillStyle = "#e0b060";
+            ctx.beginPath();
+            ctx.moveTo(daishiList[i].x + 12, daishiList[i].y);
+            ctx.lineTo(daishiList[i].x, daishiList[i].y + 8);
+            ctx.lineTo(daishiList[i].x + 24, daishiList[i].y + 8);
+            ctx.closePath();
+            ctx.fill();
+            // 顔
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(
+                daishiList[i].x + 7,
+                daishiList[i].y + 8,
+                10,
+                8
+            );
+            // 袈裟
+            ctx.fillStyle = "#ffff66";
+            ctx.fillRect(
+                daishiList[i].x + 6,
+                daishiList[i].y + 16,
+                16,
+                10
             );    
 
             //弾の当たり判定
