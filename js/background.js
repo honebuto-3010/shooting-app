@@ -127,24 +127,26 @@ function drawBackground() {
         ctx.stroke();
 
     }
-
-    /*ctx.fillStyle = skyColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);*/
-    //山
-    ctx.fillStyle = "#5f8f55";
+        //山
+    ctx.fillStyle = "#263c22";
     //左の山
     ctx.beginPath();
-    ctx.moveTo(0, 280);
-    ctx.lineTo(90, 180);
-    ctx.lineTo(180, 280);
+    ctx.moveTo(-50, 280);
+    ctx.lineTo(90, 90);
+    ctx.lineTo(230, 280);
+    ctx.fill();
+    // 中央の巨大山
+    ctx.beginPath();
+    ctx.moveTo(120, 280);
+    ctx.lineTo(240, 40);
+    ctx.lineTo(360, 280);
     ctx.fill();
     //右の山
     ctx.beginPath();
-    ctx.moveTo(220, 280);
-    ctx.lineTo(340, 160);
-    ctx.lineTo(460, 280);
+    ctx.moveTo(250, 280);
+    ctx.lineTo(420, 70);
+    ctx.lineTo(590, 280);
     ctx.fill();
-
     //==========================
     //　遠くの山
     // ========================
@@ -161,23 +163,29 @@ function drawBackground() {
 
         ctx.fill();
     }
-
-    // =====================
+        // =====================
     // 手前の山
     // =====================
-
     ctx.fillStyle = "#3a6b35";
 
-    for (let x = -80; x < canvas.width + 100; x += 120) {
+    // 数を減らして主峰を目立たせる
+    const frontMountains = [
+        { x: -40, peak: 175 },
+        { x: 140, peak: 155 },
+        { x: 340, peak: 180 }
+    ];
+
+    frontMountains.forEach(m => {
 
         ctx.beginPath();
 
-        ctx.moveTo(x, 250);
-        ctx.lineTo(x + 60, 140);
-        ctx.lineTo(x + 120, 250);
+        ctx.moveTo(m.x, 250);
+        ctx.lineTo(m.x + 60, m.peak);
+        ctx.lineTo(m.x + 120, 250);
 
         ctx.fill();
-    }
+
+    });
 
     // =====================
     // 奥森
@@ -291,6 +299,13 @@ function drawBackground() {
         }
     }
 
+        // 道標
+    ctx.fillStyle = "#cfcfcf";
+    ctx.fillRect(40, 220, 8, 40);
+
+    ctx.fillStyle = "#222";
+    ctx.fillRect(38, 225, 12, 3);
+    
     ctx.fillStyle = "#A9A9A9";
 
     for (let x = 0; x < canvas.width; x += 40) {
