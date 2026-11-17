@@ -186,7 +186,47 @@ function drawBackground() {
         ctx.fill();
 
     });
+    // =====================
+    // 山道・地面のベース（追加）
+    // =====================
+    // 1. 山の裾野から石畳までのベース（深い緑や土色など）
+    ctx.fillStyle = "#2b4a26"; // 山の裾野になじむ濃い緑（土色にするなら "#6b543a" など）
+    ctx.fillRect(0, 280, canvas.width, canvas.height - 280);
+        // 2. 少し川を流す（2段目のギザギザ木々のすぐ下あたり）
+    ctx.fillStyle = "#1E5282"; // 空と同じ爽やかな青（少し濃い川色なら "#2d6ca2"）
+    ctx.fillRect(0, 395, canvas.width, 35); // 高さ35pxの細めの川
 
+    // 川の水面のキラキラ（白い細い線を入れて川らしさを出す）
+    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.fillRect(40, 405, 50, 2);
+    ctx.fillRect(180, 415, 70, 2);
+    ctx.fillRect(260, 402, 40, 2);
+
+    // 2. 山道（土の道）の表現（お好みで追加）
+    ctx.fillStyle = "#8c7355"; // 土の色
+    ctx.fillRect(0, 430, canvas.width, 110); // Y=380あたりから石畳までを道にする例
+        // =====================
+    // 道端のお地蔵様（試し置き）
+    // =====================
+    const jizoX = canvas.width -30;  // 横の位置（左右に動かしたいときはここを変更）
+    const jizoY = 445; // 縦の位置（山道の上端あたり）
+
+    // 1. 台座（濃いグレーの石）
+    ctx.fillStyle = "#666666";
+    ctx.fillRect(jizoX - 8, jizoY + 14, 16, 5);
+
+    // 2. 体（明るいグレーの石）
+    ctx.fillStyle = "#999999";
+    ctx.fillRect(jizoX - 6, jizoY + 2, 12, 12);
+
+    // 3. 頭（丸い石）
+    ctx.beginPath();
+    ctx.arc(jizoX, jizoY, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4. 赤い前掛け（お地蔵様らしさのポイント！）
+    ctx.fillStyle = "#d93829";
+    ctx.fillRect(jizoX - 5, jizoY + 4, 10, 6);
     // =====================
     // 奥森
     // =====================
