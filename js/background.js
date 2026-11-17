@@ -34,7 +34,7 @@ function drawBackground() {
     }
 
     //空
-    let skyColor = "#3F7FB8";
+    let skyColor = "#2E86C1";
 
     if (timeOfDay === "evening") {
         skyColor = "#E06A3A";
