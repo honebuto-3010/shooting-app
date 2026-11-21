@@ -90,11 +90,13 @@ function closeGoshuinModal() {
     // 次ステージ用にリセット
     stageCleared = false;
     score = 0;
+    daishiCount = 0;
     bossSpawned = false;
 
     bullets.length = 0;
     enemies.length = 0;
     bossBullets.length = 0;
+    daishiList.length = 0;
 
     boss.y = -100;
 
