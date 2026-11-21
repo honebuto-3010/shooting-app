@@ -1,13 +1,12 @@
-// 公開時だけこの1行を入れると、すべての console.log が無効になります
-console.log = function() {};
 // ==========================================
 // Canvas
 // ==========================================
 
 const canvas = document.getElementById("gameCanvas");
 
-canvas.width = 480;
-canvas.height = 660;
+canvas.width = 450;
+canvas.height = 650;
+
 const ctx = canvas.getContext("2d");
 
 // ==========================================
@@ -83,6 +82,8 @@ let spawnTimer = 0;
 //大師さま
 // =========================================
 let daishiList = [];
+let daishiCount = 0;       //獲得した大師さまの数（追加）
+const daishiTarget = 5;    //ボス出現に必要な数　(追加）
 
 // ==========================================
 // ボス弾
@@ -92,15 +93,15 @@ const bossBullets = [];
 const bossBulletSpeed = 4;
 
 // ==========================================
-//スマホのスクロール防止
-// ==========================================
+//スマホのスクロールを完全禁止
+// =========================================
 document.addEventListener(
     "touchmove",
     (e) => {
         e.preventDefault();
     },
     { passive: false }
-);    
+);
 
 // ==========================================
 // キー入力
@@ -267,10 +268,12 @@ function startNextStage() {
     bossSpawned = false;
 
     score = 0;
+    daishiCount = 0; //大師さま獲得数リセット
 
     bullets.length = 0;
     enemies.length = 0;
     bossBullets.length = 0;
+    daishiList.length = 0; //画面に残っている大師さまも消す
 
     boss.y = -100;
 
@@ -301,6 +304,7 @@ function resetGame(fullReset = false) {
     }
 
     score = 0;
+    daishiCount = 0; //大師さま獲得数をリセット
     gameOver = false;
 
     stageCleared = false;
@@ -315,6 +319,7 @@ function resetGame(fullReset = false) {
     bullets.length = 0;
     enemies.length = 0;
     bossBullets.length = 0;
+    daishiList.length = 0; //画面に残っている大師さまも消す
 
     boss.y = -100;
 }
@@ -416,7 +421,7 @@ function animate() {
     }
 
     // 3. 敵（ザコ・ボス）の出現と管理
-    if (score >= 100 && !bossSpawned) {
+    if (score >= 100 && daishiCount >= daishiTarget && !bossSpawned) {
         spawnBoss();
     }
 
@@ -620,129 +625,144 @@ function animate() {
         ctx.textBaseline = "alphabetic";
     }
 
-    // 4. ザコ敵の移動と描画、衝突判定
+    // 4. ザコ敵(笠おばけ、カラス天狗、提灯おばけ）の移動と描画、衝突判定
+    // ==========================================
     for (let i = enemies.length - 1; i >= 0; i--) {
         const enemy = enemies[i];
         enemy.y += enemySpeed;
-        // --- 白い笠お化け（一つ目）描画 ---
+
         const centerX = enemy.x + 15;
+        const centerY = enemy.y + 15;
 
-        // 1. 一本足（木の柄と下駄）
-        ctx.fillStyle = "#8c583a";
-        ctx.fillRect(centerX - 2, enemy.y + 18, 4, 10);
-        ctx.fillRect(centerX - 5, enemy.y + 27, 10, 3);
+        if (timeOfDay === "day") {
+            // --- 【昼】白い笠お化け（一つ目）描画 ---
+            ctx.fillStyle = "#8c583a";
+            ctx.fillRect(centerX - 2, enemy.y + 18, 4, 10);
+            ctx.fillRect(centerX - 5, enemy.y + 27, 10, 3);
 
-        // 2. 笠のてっぺんの突起
-        ctx.fillStyle = "#5c3a21";
-        ctx.fillRect(centerX - 2, enemy.y, 4, 4);
+            ctx.fillStyle = "#5c3a21";
+            ctx.fillRect(centerX - 2, enemy.y, 4, 4);
 
-        // 3. 笠の本体（白に統一 ＋ 薄いフチ線で輪郭をくっきりさせる）
-        ctx.fillStyle = "#ffffff";
-        ctx.strokeStyle = "#adb5bd"; // 薄いグレーのフチ線
-        ctx.lineWidth = 1.5;
-
-        ctx.beginPath();
-        ctx.moveTo(centerX, enemy.y + 3);
-        ctx.lineTo(enemy.x + 1, enemy.y + 19);
-        ctx.lineTo(enemy.x + 29, enemy.y + 19);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke(); // フチ線を描画
-
-        // 4. 大きな一つ目（白目＋黒目）
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(centerX, enemy.y + 12, 4.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke(); // 目にも薄い輪郭を入れると白同士でもくっきり見えます
-
-        ctx.fillStyle = "#111111";
-        ctx.beginPath();
-        ctx.arc(centerX, enemy.y + 13, 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 5. アッカンベーの赤い舌
-        ctx.fillStyle = "#ff4d4d";
-        ctx.fillRect(centerX + 2, enemy.y + 19, 4, 6);
-        // --- ここまでキャラクター描画 ---
-
-        if (checkCollision(player, enemy)) {
-
-            stopBGM();
-
-            playSE("gameOver");
-
-            gameOver = true;
-        }
-        // ==========================================
-        // お大師さまの移動と描画
-        // ==========================================
-        for (let i = daishiList.length - 1; i >= 0; i--) {
-
-            daishiList[i].y += daishiList[i].speed;
-            // 仮のお大師さま（テスト用）
-            // 笠
-            ctx.fillStyle = "#e0b060";
+            ctx.fillStyle = "#ffffff";
+            ctx.strokeStyle = "#adb5bd";
+            ctx.lineWidth = 1.5;
 
             ctx.beginPath();
-            ctx.moveTo(daishiList[i].x + 12, daishiList[i].y);
-            ctx.lineTo(daishiList[i].x, daishiList[i].y + 8);
-            ctx.lineTo(daishiList[i].x + 24, daishiList[i].y + 8);
+            ctx.moveTo(centerX, enemy.y + 3);
+            ctx.lineTo(enemy.x + 1, enemy.y + 19);
+            ctx.lineTo(enemy.x + 29, enemy.y + 19);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(centerX, enemy.y + 12, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = "#111111";
+            ctx.beginPath();
+            ctx.arc(centerX, enemy.y + 13, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "#ff4d4d";
+            ctx.fillRect(centerX + 2, enemy.y + 19, 4, 6);
+
+        } else if (timeOfDay === "evening") {
+            // --- 【夕方】カラス天狗 ---
+            const flap = Math.sin(Date.now() * 0.015) * 4;
+
+            ctx.fillStyle = "#1a1a1a";
+            ctx.beginPath();
+            ctx.moveTo(centerX - 4, centerY - 2);
+            ctx.lineTo(centerX - 20, centerY - 8 + flap);
+            ctx.lineTo(centerX - 13, centerY + 6 + flap);
             ctx.closePath();
             ctx.fill();
 
-            // 顔
+            ctx.beginPath();
+            ctx.moveTo(centerX + 4, centerY - 2);
+            ctx.lineTo(centerX + 20, centerY - 8 + flap);
+            ctx.lineTo(centerX + 13, centerY + 6 + flap);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = "#263238";
+            ctx.fillRect(centerX - 6, centerY - 3, 12, 14);
             ctx.fillStyle = "#ffffff";
+            ctx.fillRect(centerX - 4, centerY, 2, 2);
+            ctx.fillRect(centerX + 2, centerY, 2, 2);
+            ctx.fillRect(centerX - 4, centerY + 5, 2, 2);
+            ctx.fillRect(centerX + 2, centerY + 5, 2, 2);
 
-            ctx.fillRect(
-                daishiList[i].x + 7,
-                daishiList[i].y + 8,
-                10,
-                8
-            );
+            ctx.fillStyle = "#111111";
+            ctx.fillRect(centerX - 6, centerY - 12, 12, 9);
 
+            ctx.fillStyle = "#d32f2f";
+            ctx.fillRect(centerX - 3, centerY - 16, 6, 4);
 
-            // 袈裟
-            ctx.fillStyle = "#ffff66";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(centerX - 4, centerY - 10, 3, 2);
+            ctx.fillRect(centerX + 1, centerY - 10, 3, 2);
+            ctx.fillStyle = "#ff1744";
+            ctx.fillRect(centerX - 3, centerY - 10, 1.5, 2);
+            ctx.fillRect(centerX + 2, centerY - 10, 1.5, 2);
 
-            ctx.fillRect(
-                daishiList[i].x + 6,
-                daishiList[i].y + 16,
-                16,
-                10
-            );
+            ctx.fillStyle = "#fbc02d";
+            ctx.beginPath();
+            ctx.moveTo(centerX - 3, centerY - 7);
+            ctx.lineTo(centerX + 3, centerY - 7);
+            ctx.lineTo(centerX, centerY - 2);
+            ctx.closePath();
+            ctx.fill();
 
-            //弾の当たり判定
-            for (let j = bullets.length - 1; j >= 0; j--) {
+        } else {
+            // --- 【夜】提灯お化け ---
+            const glow = 0.25 + (Math.sin(Date.now() * 0.008) + 1) * 0.1;
+            ctx.fillStyle = `rgba(255, 190, 50, ${glow})`;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 18, 0, Math.PI * 2);
+            ctx.fill();
 
-                if (checkCollision(bullets[j], daishiList[i])) {
+            ctx.fillStyle = "#e53935";
+            ctx.fillRect(centerX - 10, centerY - 11, 20, 22);
+            ctx.fillStyle = "#ffb300";
+            ctx.fillRect(centerX - 7, centerY - 8, 14, 16);
 
-                    playSE("daishi");
+            ctx.fillStyle = "#212121";
+            ctx.fillRect(centerX - 8, centerY - 14, 16, 3);
+            ctx.fillRect(centerX - 8, centerY + 11, 16, 3);
+            ctx.strokeStyle = "#757575";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 16, 3, 0, Math.PI * 2);
+            ctx.stroke();
 
-                    score = Math.max(0, score - 10);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(centerX - 6, centerY - 7, 5, 5);
+            ctx.fillRect(centerX + 1, centerY - 7, 5, 5);
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(centerX - 4, centerY - 5, 2, 2);
+            ctx.fillRect(centerX + 3, centerY - 5, 2, 2);
 
-                    bullets.splice(j, 1);
-                    daishiList.splice(i, 1);
-
-                    console.log("お大師さま命中 -10");
-
-                    break;
-                }
-            }
-
-            // 画面外へ出たら削除
-            if (daishiList[i] &&
-                daishiList[i].y > canvas.height
-            ) {
-                daishiList.splice(i, 1);
-            }
+            ctx.fillStyle = "#212121";
+            ctx.fillRect(centerX - 7, centerY + 1, 14, 4);
+            ctx.fillStyle = "#ff4081";
+            ctx.fillRect(centerX - 2, centerY + 3, 4, 7);
         }
 
+        // プレイヤーとザコ敵の衝突判定
+        if (checkCollision(player, enemy)) {
+            stopBGM();
+            playSE("gameOver");
+            gameOver = true;
+        }
+
+        // 弾とザコ敵の当たり判定
         for (let j = bullets.length - 1; j >= 0; j--) {
-            if (checkCollision(bullets[j], enemies[i])) {
-
+            if (enemies[i] && checkCollision(bullets[j], enemies[i])) {
                 playSE("enemyHit");
-
                 enemies.splice(i, 1);
                 bullets.splice(j, 1);
                 if (!bossSpawned) {
@@ -752,10 +772,61 @@ function animate() {
             }
         }
 
+        // 画面外へ出たらザコ敵を削除
         if (enemies[i] && enemies[i].y > canvas.height) {
             enemies.splice(i, 1);
         }
     }
+
+    // ==========================================
+    // お大師さまの移動と描画（完全に独立！）
+    // ==========================================
+    for (let i = daishiList.length - 1; i >= 0; i--) {
+        daishiList[i].y += daishiList[i].speed * 3;
+
+        // 笠
+        ctx.fillStyle = "#e0b060";
+        ctx.beginPath();
+        ctx.moveTo(daishiList[i].x + 12, daishiList[i].y);
+        ctx.lineTo(daishiList[i].x, daishiList[i].y + 8);
+        ctx.lineTo(daishiList[i].x + 24, daishiList[i].y + 8);
+        ctx.closePath();
+        ctx.fill();
+
+        // 顔
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(daishiList[i].x + 7, daishiList[i].y + 8, 10, 8);
+
+        // 袈裟
+        ctx.fillStyle = "#ffff66";
+        ctx.fillRect(daishiList[i].x + 6, daishiList[i].y + 16, 16, 10);
+
+        // ① プレイヤーと大師さまの当たり判定（獲得）
+        if (daishiList[i] && checkCollision(player, daishiList[i])) {
+            playSE("daishi");
+            daishiCount = Math.min(daishiTarget, daishiCount + 1);
+            daishiList.splice(i, 1);
+            console.log("お大師さま獲得！現在:", daishiCount);
+            continue;
+        }
+
+        // 弾の当たり判定
+        for (let j = bullets.length - 1; j >= 0; j--) {
+            if (daishiList[i] && checkCollision(bullets[j], daishiList[i])) {
+                playSE("daishi");
+                bullets.splice(j, 1);
+                daishiList.splice(i, 1);
+                console.log("お大師さま誤射！取り逃がし");
+                break;
+            }
+        }
+
+        // 画面外へ出たら削除
+        if (daishiList[i] && daishiList[i].y > canvas.height) {
+            daishiList.splice(i, 1);
+        }
+    }
+
 
     // 5. UI（情報）の表示
     ctx.font = "16px Arial, sans-serif";
@@ -763,32 +834,45 @@ function animate() {
     ctx.fillText(`第 ${currentStageIndex + 1} 番札所 【${getCurrentTempleName()}】`, 20, 30);
 
     if (bossSpawned === false) {
-        ctx.fillText(`煩悩退散: ${score} / 100`, 20, 55);
+        //100点達成したら文字を黄色にする
+        ctx.fillStyle = (score >= 100) ? "#ffdd44" : "white";
+        ctx.fillText(`煩悩退散: ${Math.min(100, score)} / 100`, 20, 55);
+
+        //大師さま5体獲得達成したら文字を黄色にする
+        ctx.fillStyle = (daishiCount >= daishiTarget) ? "#ffdd44" : "white";
+        ctx.fillText(`大師同行: ${daishiCount} / ${daishiTarget}`, 20, 80);
     } else {
-        ctx.fillStyle = "#ff5555";
+        //白い縁取りの設定
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 4; //縁取りの太さ
+        ctx.lineJoin = "round"; //角を丸くしてキレイに見せる
+        ctx.strokeText(`★ ボス出現：煩悩の主 ★`, 10, 55);
+
+        //内側の赤文字
+        ctx.fillStyle = "#ff2222";
         ctx.fillText(`★ ボス出現：煩悩の主 ★`, 10, 55);
     }
 }
 
-// 初期化を行ってからループアニメーションを開始
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
+    // 初期化を行ってからループアニメーションを開始
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
-if (
-    params.get("continue") === "true"
-) {
+    if (
+        params.get("continue") === "true"
+    ) {
 
-    loadGame();
+        loadGame();
 
-} else {
+    } else {
 
-    resetGame(true);
+        resetGame(true);
 
-}
+    }
 
-playBGM("stage");
+    playBGM("stage");
 
-animate();
+    animate();
 
