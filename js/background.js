@@ -34,7 +34,7 @@ function drawBackground() {
     }
 
     //空
-    let skyColor = "#3F7FB8";
+    let skyColor = "#2E86C1";
 
     if (timeOfDay === "evening") {
         skyColor = "#E06A3A";
@@ -130,124 +130,180 @@ function drawBackground() {
 
     }
 
-        // =========================================
-    // 1. 最遠景の山脈（空に溶け込む淡い青緑・一番奥に描画）
-    // =========================================
-    ctx.fillStyle = "#3d6347"; // 空の青(#3b78ad前後)に少し緑を混ぜた色
-    const farPeaks = [
-        { x: -30, peakX: 35,  peakY: 115, w: 150 },
-        { x: 110, peakX: 165, peakY: 85,  w: 140 },
-        { x: 260, peakX: 325, peakY: 95,  w: 160 },
-        { x: 380, peakX: 460, peakY: 120, w: 150 }
-    ];
-    farPeaks.forEach(m => {
-        ctx.beginPath();
-        ctx.moveTo(m.x, 280);
-        ctx.lineTo(m.peakX, m.peakY);
-        ctx.lineTo(m.x + m.w, 280);
-        ctx.closePath();
-        ctx.fill();
-    });
-
-    // =========================================
-    // 2. 主峰（左・中央の巨大山・右の3つの大きな山）
-    // =========================================
+    /*ctx.fillStyle = skyColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);*/
+    //山
     ctx.fillStyle = "#263c22";
-    // 左の山
+    //左の山
     ctx.beginPath();
     ctx.moveTo(-50, 280);
     ctx.lineTo(90, 90);
     ctx.lineTo(230, 280);
     ctx.fill();
-
     // 中央の巨大山
     ctx.beginPath();
     ctx.moveTo(120, 280);
     ctx.lineTo(240, 40);
     ctx.lineTo(360, 280);
     ctx.fill();
-
-    // 右の山
+    //右の山
     ctx.beginPath();
     ctx.moveTo(250, 280);
     ctx.lineTo(420, 70);
     ctx.lineTo(590, 280);
     ctx.fill();
 
-    // =========================================
-    // 3. 中景の山並み（高さと幅を不規則にして自然な連なりにする）
-    // =========================================
+    //==========================
+    //　遠くの山
+    // ========================
+
     ctx.fillStyle = "#4e7f46";
-    const midMountains = [
-        { x: -50, peakX: -5,  peakY: 165, w: 95 },
-        { x: 25,  peakX: 70,  peakY: 180, w: 90 },
-        { x: 95,  peakX: 135, peakY: 168, w: 85 },
-        { x: 165, peakX: 215, peakY: 185, w: 100 },
-        { x: 255, peakX: 300, peakY: 162, w: 95 },
-        { x: 335, peakX: 380, peakY: 178, w: 90 },
-        { x: 405, peakX: 455, peakY: 165, w: 100 }
-    ];
-    midMountains.forEach(m => {
-        ctx.beginPath();
-        ctx.moveTo(m.x, 240);
-        ctx.lineTo(m.peakX, m.peakY);
-        ctx.lineTo(m.x + m.w, 240);
-        ctx.closePath();
-        ctx.fill();
-    });
 
-    // =========================================
-    // 4. 手前の山（一番濃い緑・数を増やして立体感を出す）
-    // =========================================
+    for (let x = -50; x < canvas.width + 100; x += 80) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(x, 220);
+        ctx.lineTo(x + 40, 170);
+        ctx.lineTo(x + 80, 220);
+
+        ctx.fill();
+    }
+    // =====================
+    // 手前の山
+    // =====================
     ctx.fillStyle = "#3a6b35";
+
+    // 数を減らして主峰を目立たせる
     const frontMountains = [
-        { x: -45, peak: 175, w: 120 },
-        { x: 65,  peak: 190, w: 110 },
-        { x: 145, peak: 155, w: 130 },
-        { x: 260, peak: 185, w: 115 },
-        { x: 345, peak: 172, w: 130 }
+        { x: -40, peak: 175 },
+        { x: 140, peak: 155 },
+        { x: 340, peak: 180 }
     ];
+
     frontMountains.forEach(m => {
+
         ctx.beginPath();
-        ctx.moveTo(m.x, 255);
-        ctx.lineTo(m.x + m.w / 2, m.peak);
-        ctx.lineTo(m.x + m.w, 255);
-        ctx.closePath();
+
+        ctx.moveTo(m.x, 250);
+        ctx.lineTo(m.x + 60, m.peak);
+        ctx.lineTo(m.x + 120, 250);
+
         ctx.fill();
+
     });
-
-    /*ctx.fillStyle = skyColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);*/
-
     // =====================
     // 山道・地面のベース（追加）
     // =====================
     // 1. 山の裾野から石畳までのベース（深い緑や土色など）
     ctx.fillStyle = "#2b4a26"; // 山の裾野になじむ濃い緑（土色にするなら "#6b543a" など）
     ctx.fillRect(0, 280, canvas.width, canvas.height - 280);
-     // 2. 少し川を流す（2段目のギザギザ木々のすぐ下あたり）
+    // 2. 少し川を流す（2段目のギザギザ木々のすぐ下あたり）
     ctx.fillStyle = "#1E5282"; // 空と同じ爽やかな青（少し濃い川色なら "#2d6ca2"）
-    ctx.fillRect(0, 395, canvas.width, 65); // 高さ35pxの細めの川
-    // 川岸の影（奥側の岸辺に少し濃いラインを入れて立体感を出す）
-    ctx.fillStyle = "#143859";
-    ctx.fillRect(0, 395, canvas.width, 4);
+    ctx.fillRect(0, 395, canvas.width, 70); // 高さ35pxの細めの川
+
     // 川の水面のキラキラ（白い細い線を入れて川らしさを出す）
     ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
-    ctx.fillRect(35,  408, 50, 2);
-    ctx.fillRect(250, 405, 45, 2);
-    ctx.fillRect(140, 424, 70, 2);
-    ctx.fillRect(330, 428, 55, 2);
-    ctx.fillRect(60,  443, 60, 2);
-    ctx.fillRect(220, 446, 65, 2);
+    ctx.fillRect(40, 405, 50, 2);
+    ctx.fillRect(180, 415, 70, 2);
+    ctx.fillRect(260, 402, 40, 2);
+    ctx.fillRect(90, 448, 60, 2);  // 追加
+    ctx.fillRect(210, 452, 45, 2); // 追加
+
 
     // 2. 山道（土の道）の表現（お好みで追加）
     ctx.fillStyle = "#8c7355"; // 土の色
-    ctx.fillRect(0, 460, canvas.width, 80); // Y=380あたりから石畳までを道にする例
+    ctx.fillRect(0, 465, canvas.width, 75); // Y=380あたりから石畳までを道にする例
+    // =====================
+    // 川の下のお茶所・休憩所（追加）
+    // =====================
+    function drawChaya(x, y) {
+        // 1. 縁台（木のベンチ）の脚
+        ctx.fillStyle = "#4a3219";
+        ctx.fillRect(x + 6, y - 6, 4, 6);
+        ctx.fillRect(x + 34, y - 6, 4, 6);
+
+        // 2. 縁台の座面（赤い毛氈・もうせん風）
+        ctx.fillStyle = "#b8292f";
+        ctx.fillRect(x + 2, y - 10, 40, 4);
+
+        // 3. 湯呑み（お接待のお茶）
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 12, y - 13, 4, 3);
+        ctx.fillStyle = "#7cb342"; // 緑茶の色
+        ctx.fillRect(x + 13, y - 13, 2, 1);
+
+        // 4. 野点傘（のだてがさ）の柱
+        ctx.fillStyle = "#3e2723";
+        ctx.fillRect(x + 28, y - 34, 3, 28);
+
+        // 5. 野点傘の赤い傘部分
+        ctx.fillStyle = "#d32f2f";
+        ctx.beginPath();
+        ctx.moveTo(x + 8, y - 28);   // 左端
+        ctx.lineTo(x + 51, y - 28);  // 右端
+        ctx.lineTo(x + 29.5, y - 38); // 頂点
+        ctx.closePath();
+        ctx.fill();
+
+        // 傘のフチの白いライン（アクセント）
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 9, y - 28, 41, 1.5);
+    }
+
+    // 土の道の右側（例：X=210, Y=515あたり）に配置
+    // ※川と石畳の間の茶色いエリアに収まるようにY座標を調整してください
+    drawChaya(210, 515);
+
         // =====================
+    // 左端の屋根付き休憩小屋（東屋・追加）
+    // =====================
+    function drawAzumaya(x, y) {
+        // 1. 土台（石の基礎）
+        ctx.fillStyle = "#7a7a7a";
+        ctx.fillRect(x + 2, y - 3, 56, 3);
+
+        // 2. 奥の柱（少し暗い茶色で奥行きを出す）
+        ctx.fillStyle = "#4e342e";
+        ctx.fillRect(x + 12, y - 24, 3, 21);
+        ctx.fillRect(x + 45, y - 24, 3, 21);
+
+        // 3. 中のベンチ（縁台）
+        ctx.fillStyle = "#8d6e63";
+        ctx.fillRect(x + 10, y - 9, 40, 3);
+        ctx.fillRect(x + 14, y - 6, 3, 3); // ベンチ脚
+        ctx.fillRect(x + 43, y - 6, 3, 3); // ベンチ脚
+
+        // 4. 手前の柱（明るい茶色）
+        ctx.fillStyle = "#6d4c41";
+        ctx.fillRect(x + 6, y - 24, 4, 21);
+        ctx.fillRect(x + 50, y - 24, 4, 21);
+
+        // 5. 屋根（瓦屋根風の濃いグレー）
+        ctx.fillStyle = "#37474f";
+        ctx.beginPath();
+        ctx.moveTo(x, y - 24);         // 屋根の左端
+        ctx.lineTo(x + 60, y - 24);    // 屋根の右端
+        ctx.lineTo(x + 44, y - 38);    // 屋根の上部・右
+        ctx.lineTo(x + 16, y - 38);    // 屋根の上部・左
+        ctx.closePath();
+        ctx.fill();
+
+        // 6. 屋根の棟（一番上の飾り・アクセント）
+        ctx.fillStyle = "#263238";
+        ctx.fillRect(x + 15, y - 40, 30, 2);
+    }
+
+    // 土の道の左端（例：X=15, Y=520あたり）に配置
+    // ※右側の「drawChaya(210, 515)」と並べてバランスを見て調整してください
+    drawAzumaya(15, 520);
+
+
+    // =====================
     // 道端のお地蔵様（試し置き）
     // =====================
-    const jizoX = canvas.width -30;  // 横の位置（左右に動かしたいときはここを変更）
-    const jizoY = 475; // 縦の位置（山道の上端あたり）
+    const jizoX = canvas.width - 30;  // 横の位置（左右に動かしたいときはここを変更）
+    const jizoY = 445; // 縦の位置（山道の上端あたり）
 
     // 1. 台座（濃いグレーの石）
     ctx.fillStyle = "#666666";
@@ -267,44 +323,97 @@ function drawBackground() {
     ctx.fillRect(jizoX - 5, jizoY + 4, 10, 6);
 
     // =====================
-    // 奥森
+    // 奥森（一番奥の木々）
     // =====================
-
     ctx.fillStyle = "#356835";
-
     for (let x = -15; x < canvas.width; x += 30) {
-
         ctx.beginPath();
-
         ctx.moveTo(x, 320);
         ctx.lineTo(x + 15, 290);
         ctx.lineTo(x + 30, 320);
-
         ctx.fill();
     }
-    //森
-    ctx.fillStyle = "#2a5d2a";
 
+    // =====================
     // 後ろ側の森
+    // =====================
+    ctx.fillStyle = "#2a5d2a";
     for (let x = -15; x < canvas.width; x += 30) {
-
         ctx.beginPath();
-
         ctx.moveTo(x, 380);
         ctx.lineTo(x + 15, 350);
         ctx.lineTo(x + 30, 380);
-
         ctx.fill();
     }
 
+    // =====================
+    // 山のふもとの五重塔（森の間に配置！）
+    // =====================
+    function drawGojunoto(x, y, type = "wood") {
+        const colors = type === "wood" ? {
+            base: "#7a7a7a",    // 石の土台
+            wall: "#6d4c41",    // 木造の壁（濃い茶色）
+            pillar: "#4e342e",  // 木の柱（さらに濃い茶色）
+            roof: "#37474f",    // 瓦屋根（濃いグレー）
+            sorin: "#b0bec5"    // 相輪
+        } : {
+            base: "#8d8d8d",    // 石の土台
+            wall: "#f5f5f5",    // 白壁
+            pillar: "#c62828",  // 朱塗りの柱・欄干
+            roof: "#263238",    // 濃い瓦屋根
+            sorin: "#fbc02d"    // 金色の相輪
+        };
+
+        // 1. 土台（基壇）
+        ctx.fillStyle = colors.base;
+        ctx.fillRect(x + 4, y - 5, 36, 5);
+
+        // 2. 五重の層
+        for (let i = 0; i < 5; i++) {
+            const layerY = y - 5 - (i * 13);
+            const shrink = i * 2.5;
+            
+            const wallW = 28 - shrink;
+            const wallX = x + 22 - (wallW / 2);
+            const roofW = 42 - (shrink * 1.2);
+            const roofX = x + 22 - (roofW / 2);
+
+            ctx.fillStyle = colors.wall;
+            ctx.fillRect(wallX, layerY - 8, wallW, 8);
+
+            ctx.fillStyle = colors.pillar;
+            ctx.fillRect(wallX, layerY - 8, 2, 8);
+            ctx.fillRect(wallX + wallW - 2, layerY - 8, 2, 8);
+            ctx.fillRect(x + 21, layerY - 8, 2, 8);
+
+            ctx.fillStyle = colors.roof;
+            ctx.beginPath();
+            ctx.moveTo(roofX, layerY - 8);
+            ctx.lineTo(roofX + roofW, layerY - 8);
+            ctx.lineTo(roofX + roofW - 5, layerY - 13);
+            ctx.lineTo(roofX + 5, layerY - 13);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // 3. 相輪
+        const topY = y - 5 - (5 * 13);
+        ctx.fillStyle = colors.sorin;
+        ctx.fillRect(x + 21, topY - 16, 2, 16);
+        ctx.fillRect(x + 19, topY - 11, 6, 1.5);
+        ctx.fillRect(x + 19, topY - 7, 6, 1.5);
+    }
+
+    // 後ろ側の森（Y=380）より手前に描画し、Y=388に配置
+    drawGojunoto(15, 388, "wood");                  // 左端：木造の五重塔
+    drawGojunoto(canvas.width - 59, 388, "red");    // 右端：赤系と白系の五重塔
+
+    // =====================
+    // 一番手前の森（塔の足元が少し隠れて自然になじむ）
+    // =====================
     ctx.fillStyle = "#1f4f1f";
-
     for (let x = 0; x < canvas.width; x += 30) {
-
-        const height = (x / 30) % 2 === 0
-            ? 20
-            : 35;
-
+        const height = (x / 30) % 2 === 0 ? 20 : 35;
         ctx.beginPath();
         ctx.moveTo(x, 400);
         ctx.lineTo(x + 15, 400 - height);
@@ -312,51 +421,6 @@ function drawBackground() {
         ctx.fill();
     }
 
-        // =========================================
-    // 手前の森の木々（五重塔・ケーブルと重ならない配置）
-    // =========================================
-    const forestTrees = [
-        // x: 木の頂点のX, y: 木の頂点のY, scale: 大きさ倍率, color: 葉の色
-        { x: 65,  y: 332, scale: 1.0,  color: "#142e12" }, // 左の白い標識の右側
-        { x: 92,  y: 345, scale: 0.85, color: "#1e421b" }, // 少し小さめの木
-        { x: 145, y: 338, scale: 1.1,  color: "#142e12" }, // 左中央・大きめ
-        { x: 175, y: 350, scale: 0.8,  color: "#254f21" }, // 中央やや左
-        { x: 245, y: 342, scale: 0.95, color: "#1e421b" }, // 中央やや右（ケーブルの左側）
-        { x: 325, y: 348, scale: 0.85, color: "#142e12" }, // 五重塔のすぐ左
-        { x: 408, y: 335, scale: 1.05, color: "#1e421b" }  // 五重塔の右端
-    ];
-
-    forestTrees.forEach(t => {
-        const w = 14 * t.scale; // 葉の半分の幅
-        const h = 26 * t.scale; // 葉の高さ
-
-        // 葉（2段重ねのファミコン風針葉樹にして立体感を出す）
-        ctx.fillStyle = t.color;
-        // 下段の葉
-        ctx.beginPath();
-        ctx.moveTo(t.x, t.y + h * 0.35);
-        ctx.lineTo(t.x - w, t.y + h);
-        ctx.lineTo(t.x + w, t.y + h);
-        ctx.closePath();
-        ctx.fill();
-
-        // 上段の葉
-        ctx.beginPath();
-        ctx.moveTo(t.x, t.y);
-        ctx.lineTo(t.x - w * 0.78, t.y + h * 0.6);
-        ctx.lineTo(t.x + w * 0.78, t.y + h * 0.6);
-        ctx.closePath();
-        ctx.fill();
-
-        // 幹（茶色）
-        ctx.fillStyle = "#5c3a21";
-        ctx.fillRect(
-            t.x - 2.5 * t.scale,
-            t.y + h,
-            5 * t.scale,
-            9 * t.scale
-        );
-    });
 
     //遍路道
     ctx.fillStyle = "#a9a9a9";
@@ -398,6 +462,143 @@ function drawBackground() {
         10
     );
 
+        // =====================
+    // 1. 真ん中の山頂のお寺（本堂）
+    // =====================
+    function drawMountainTemple(x, y) {
+        // 石垣（土台）
+        ctx.fillStyle = "#7a7a7a";
+        ctx.fillRect(x - 22, y - 5, 44, 5);
+
+        // 本堂の壁・柱（白壁と朱塗り柱）
+        ctx.fillStyle = "#f5f5f5";
+        ctx.fillRect(x - 18, y - 17, 36, 12);
+        ctx.fillStyle = "#c62828"; // 朱色の柱
+        ctx.fillRect(x - 18, y - 17, 3, 12);
+        ctx.fillRect(x - 6, y - 17, 2, 12);
+        ctx.fillRect(x + 4, y - 17, 2, 12);
+        ctx.fillRect(x + 15, y - 17, 3, 12);
+
+        // 大屋根（瓦屋根）
+        ctx.fillStyle = "#263238";
+        ctx.beginPath();
+        ctx.moveTo(x - 25, y - 17);
+        ctx.lineTo(x + 25, y - 17);
+        ctx.lineTo(x + 15, y - 27);
+        ctx.lineTo(x - 15, y - 27);
+        ctx.closePath();
+        ctx.fill();
+
+        // 屋根の棟（金の飾り）
+        ctx.fillStyle = "#fbc02d";
+        ctx.fillRect(x - 15, y - 28, 30, 2);
+    }
+
+    // =====================
+    // 2. 山道の仁王門（山門）
+    // =====================
+    function drawNiomon(x, y) {
+        // 石の土台（左右）
+        ctx.fillStyle = "#7a7a7a";
+        ctx.fillRect(x - 24, y - 4, 16, 4);
+        ctx.fillRect(x + 8, y - 4, 16, 4);
+
+        // 仁王門の左右の柱・格子（朱塗り）
+        ctx.fillStyle = "#b71c1c";
+        ctx.fillRect(x - 22, y - 26, 12, 22);
+        ctx.fillRect(x + 10, y - 26, 12, 22);
+
+        // 仁王像のシルエット（暗い格子の中）
+        ctx.fillStyle = "#3e2723";
+        ctx.fillRect(x - 19, y - 22, 6, 15);
+        ctx.fillRect(x + 13, y - 22, 6, 15);
+
+        // 中央の通路の奥（少し暗くして奥行きを出す）
+        ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+        ctx.fillRect(x - 10, y - 24, 20, 20);
+
+        // 上部の貫（ぬき・横木）と扁額（お寺の看板）
+        ctx.fillStyle = "#c62828";
+        ctx.fillRect(x - 24, y - 28, 48, 4);
+        ctx.fillStyle = "#212121"; // 黒い扁額
+        ctx.fillRect(x - 4, y - 27, 8, 6);
+        ctx.fillStyle = "#fbc02d"; // 金文字風
+        ctx.fillRect(x - 2, y - 25, 4, 2);
+
+        // 仁王門の大きな瓦屋根（入母屋風）
+        ctx.fillStyle = "#37474f";
+        ctx.beginPath();
+        ctx.moveTo(x - 30, y - 28);
+        ctx.lineTo(x + 30, y - 28);
+        ctx.lineTo(x + 18, y - 40);
+        ctx.lineTo(x - 18, y - 40);
+        ctx.closePath();
+        ctx.fill();
+
+        // 屋根の棟
+        ctx.fillStyle = "#263238";
+        ctx.fillRect(x - 18, y - 42, 36, 2);
+    }
+
+    // =====================
+    // 3. ロープウェイ（ケーブル＋動くゴンドラ）
+    // =====================
+    function drawRopeway(startX, startY, endX, endY) {
+        // 1. ロープ（2本のワイヤーを少しずらしてリアルに）
+        ctx.strokeStyle = "rgba(40, 40, 40, 0.8)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(200, 200, 200, 0.5)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY + 2);
+        ctx.lineTo(endX, endY + 2);
+        ctx.stroke();
+
+        // 2. ゴンドラの現在位置を計算（時間経過で0.0〜1.0を往復）
+        // ※約16秒かけて片道をゆっくり移動します
+        const progress = (Math.sin(Date.now() * 0.0004) + 1) / 2;
+        const gx = startX + (endX - startX) * progress;
+        const gy = startY + (endY - startY) * progress;
+
+        // 3. ゴンドラ本体を描画
+        // 懸垂アーム（ロープとゴンドラをつなぐアーム）
+        ctx.fillStyle = "#424242";
+        ctx.fillRect(gx - 1, gy, 2, 7);
+
+        // キャビン（赤と白のレトロなゴンドラ）
+        ctx.fillStyle = "#d32f2f"; // 上半分：赤
+        ctx.fillRect(gx - 8, gy + 7, 16, 5);
+        ctx.fillStyle = "#ffffff"; // 下半分：白
+        ctx.fillRect(gx - 8, gy + 12, 16, 5);
+
+        // 窓（水色）
+        ctx.fillStyle = "#81d4fa";
+        ctx.fillRect(gx - 6, gy + 8, 3, 3);
+        ctx.fillRect(gx - 1.5, gy + 8, 3, 3);
+        ctx.fillRect(gx + 3, gy + 8, 3, 3);
+    }
+
+      // --- 配置の実行 ---
+    // 1. 真ん中の山の頂上付近にお寺を配置
+    const templeX = canvas.width / 2;
+    const templeY = 115;
+    drawMountainTemple(templeX, templeY);
+
+    // 2. 山道の右側（茶屋と被らない位置）に仁王門を移動！
+    // ※右端の余裕を見ながら「canvas.width - 65」あたりに配置します
+    const gateX = canvas.width - 65;
+    const gateY = 525;
+    drawNiomon(gateX, gateY);
+
+    // 3. 仁王門の左横から山頂のお寺の右横まで、斜めにロープウェイを結ぶ
+    drawRopeway(gateX - 15, gateY - 25, templeX + 18, templeY - 12);
+
+
     // 石畳の線
     ctx.strokeStyle = "#333333";
 
@@ -423,6 +624,58 @@ function drawBackground() {
             );
         }
     }
+    // =====================
+    // 石畳の上の石灯籠（大小対応版）
+    // =====================
+    function drawToro(x, y, scale = 1.0) {
+        ctx.save();
+        ctx.translate(x, y);      // 基準点（灯籠の足元・左端）に移動
+        ctx.scale(scale, scale);  // 全体のサイズを拡大・縮小
+
+        // 1. 基礎（一番下の台座）
+        ctx.fillStyle = "#7a7a7a";
+        ctx.fillRect(0, -6, 24, 6);
+
+        // 2. 竿（真ん中の柱）
+        ctx.fillStyle = "#999999";
+        ctx.fillRect(8, -22, 8, 16);
+
+        // 3. 中台（火袋の下の受け皿）
+        ctx.fillStyle = "#7a7a7a";
+        ctx.fillRect(4, -26, 16, 4);
+
+        // 4. 火袋（明かりが灯る部分）
+        ctx.fillStyle = "#555555";
+        ctx.fillRect(6, -36, 12, 10);
+        // 火袋の中の温かい光
+        ctx.fillStyle = "#ffcc33";
+        ctx.fillRect(9, -34, 6, 6);
+
+        // 5. 笠（屋根部分・三角形）
+        ctx.fillStyle = "#666666";
+        ctx.beginPath();
+        ctx.moveTo(-2, -36);
+        ctx.lineTo(26, -36);
+        ctx.lineTo(12, -46);
+        ctx.closePath();
+        ctx.fill();
+
+        // 6. 宝珠（てっぺんの丸い飾り）
+        ctx.fillStyle = "#888888";
+        ctx.fillRect(10, -49, 4, 3);
+
+        ctx.restore(); // 拡大・縮小の設定を元に戻す
+    }
+
+    // --- 配置例 ---
+    // 外側に「大きい灯籠（1.0倍）」、内側に「小さい灯籠（0.7倍）」を配置
+    // ※プレイヤーが真ん中を通りやすいように間隔を空けています
+    drawToro(20, 565, 1.0);                  // 左・大
+    drawToro(75, 558, 0.7);                  // 左・小（少し奥に置くと遠近感が出ます）
+
+    drawToro(canvas.width - 92, 558, 0.7);   // 右・小
+    drawToro(canvas.width - 44, 565, 1.0);   // 右・大
+
     // 道標
     ctx.fillStyle = "#cfcfcf";
     ctx.fillRect(40, 220, 8, 40);
@@ -440,256 +693,6 @@ function drawBackground() {
             4
         );
     }
-
-        // =================================================================
-    // 新レイアウト用：五重塔・鳥居・仁王門・中腹のお寺・ロープウェイ
-    // =================================================================
-
-    // ---------------------------------
-    // 1. 山の中腹のお寺（一番高い主峰の左斜面に配置）
-    // ---------------------------------
-    const midTempleX = 185;
-    const midTempleY = 128;
-
-    // 石垣の土台
-    ctx.fillStyle = "#8C8C8C";
-    ctx.fillRect(midTempleX - 2, midTempleY + 12, 34, 5);
-
-    // 本堂の白壁と赤い柱
-    ctx.fillStyle = "#F5F5F5";
-    ctx.fillRect(midTempleX + 3, midTempleY + 5, 24, 7);
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(midTempleX + 2, midTempleY + 5, 2, 7);
-    ctx.fillRect(midTempleX + 14, midTempleY + 5, 2, 7);
-    ctx.fillRect(midTempleX + 26, midTempleY + 5, 2, 7);
-
-    // 瓦屋根
-    ctx.fillStyle = "#222222";
-    ctx.fillRect(midTempleX,     midTempleY + 3, 30, 3);
-    ctx.fillRect(midTempleX + 5, midTempleY,     20, 3);
-
-    // ---------------------------------
-    // 2. 五重塔（川の向こう側・森林帯の右寄りに着地）
-    // ---------------------------------
-    const towerX = 355;
-    const towerY = 302; // 土台がちょうど川の岸辺（Y=383付近）に着地する高さ
-
-    // 相輪（てっぺんの飾り）
-    ctx.fillStyle = "#D4AF37";
-    ctx.fillRect(towerX + 19, towerY,      2, 16);
-    ctx.fillRect(towerX + 17, towerY + 4,  6, 2);
-    ctx.fillRect(towerX + 16, towerY + 8,  8, 2);
-    ctx.fillRect(towerX + 17, towerY + 12, 6, 2);
-
-    // 五層の屋根と赤い塔身
-    for (let i = 0; i < 5; i++) {
-        const layerY = towerY + 16 + (i * 12);
-        const roofW  = 24 + (i * 4);
-        const roofX  = towerX + 20 - (roofW / 2);
-
-        ctx.fillStyle = "#D9381E";
-        ctx.fillRect(roofX + 4, layerY + 4, roofW - 8, 8);
-
-        ctx.fillStyle = "#F5F5F5";
-        ctx.fillRect(roofX + 7, layerY + 5, roofW - 14, 6);
-
-        ctx.fillStyle = "#D9381E";
-        ctx.fillRect(towerX + 19, layerY + 4, 2, 8);
-
-        ctx.fillStyle = "#222222";
-        ctx.fillRect(roofX, layerY, roofW, 4);
-
-        ctx.fillStyle = "#555555";
-        ctx.fillRect(roofX + 2, layerY + 1, roofW - 4, 1);
-    }
-
-    // 石の土台
-    const baseY = towerY + 16 + (5 * 12);
-    ctx.fillStyle = "#9E9E9E";
-    ctx.fillRect(towerX - 2, baseY, 44, 5);
-
-        // ---------------------------------
-    // 6. お接待処（茶屋と赤い和傘）
-    // ---------------------------------
-    const teaX = 45;
-    const teaY = 478; // 仁王門と同じ高さのライン
-
-    // 1. 茶屋の小屋（木造・瓦屋根）
-    ctx.fillStyle = "#5D4037"; // 柱・壁（こげ茶）
-    ctx.fillRect(teaX, teaY + 8, 36, 22);
-    ctx.fillStyle = "#D7CCC8"; // のれん・障子風（薄いベージュ）
-    ctx.fillRect(teaX + 4, teaY + 12, 28, 12);
-
-    // 屋根
-    ctx.fillStyle = "#263238";
-    ctx.fillRect(teaX - 4, teaY + 2, 44, 6);
-    ctx.fillRect(teaX,     teaY,     36, 3);
-
-    // 2. 赤い和傘（野点傘）と縁台
-    const umbrellaX = teaX + 52;
-    const umbrellaY = teaY + 6;
-
-    // 傘の柄
-    ctx.fillStyle = "#3E2723";
-    ctx.fillRect(umbrellaX, umbrellaY + 6, 2, 24);
-
-    // 赤い傘（三角形風ドット）
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(umbrellaX - 12, umbrellaY + 4, 26, 4);
-    ctx.fillRect(umbrellaX - 8,  umbrellaY + 1, 18, 3);
-    ctx.fillRect(umbrellaX - 3,  umbrellaY - 1, 8,  2);
-
-    // 長椅子（縁台）
-    ctx.fillStyle = "#8D6E63";
-    ctx.fillRect(umbrellaX - 10, umbrellaY + 18, 22, 4);
-    ctx.fillRect(umbrellaX - 8,  umbrellaY + 22, 3,  4);
-    ctx.fillRect(umbrellaX + 7,  umbrellaY + 22, 3,  4);
-
-
-    // ---------------------------------
-    // 3. ファミコン風・赤い鳥居（石畳の入り口・手前サイズ版）
-    // ---------------------------------
-    const toriiX = 50;
-    const toriiY = canvas.height - 115; // 石畳の一番上のラインに足元（+45px）が着地する高さ
-
-    // 柱と貫（手前に来た分、少し大きく存在感を出す）
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(toriiX + 9,  toriiY + 6, 6, 39); // 左の柱
-    ctx.fillRect(toriiX + 37, toriiY + 6, 6, 39); // 右の柱
-    ctx.fillRect(toriiX + 3,  toriiY + 15, 46, 5); // 貫（横木）
-    ctx.fillRect(toriiX + 24, toriiY + 6, 4, 9);   // 額束
-
-    // 笠木（上の屋根部分）
-    ctx.fillStyle = "#1A1A1A";
-    ctx.fillRect(toriiX,     toriiY,     52, 3);
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(toriiX + 2, toriiY + 3, 48, 3);
-
-    // 根元の石台（亀腹）
-    ctx.fillStyle = "#E0E0E0";
-    ctx.fillRect(toriiX + 8,  toriiY + 41, 8, 4);
-    ctx.fillRect(toriiX + 36, toriiY + 41, 8, 4);
-
-    // ---------------------------------
-    // 4. ファミコン風・仁王門（茶色い道の右側・お地蔵さんの左隣に配置）
-    // ---------------------------------
-    const gateX = 315;
-    const gateY = 470; // 鳥居と高さを揃えて道に着地
-
-    // 屋根（2層）
-    ctx.fillStyle = "#222222";
-    ctx.fillRect(gateX + 12, gateY,      46, 5);
-    ctx.fillRect(gateX + 4,  gateY + 12, 62, 6);
-
-    ctx.fillStyle = "#555555";
-    ctx.fillRect(gateX + 14, gateY + 1,  42, 2);
-    ctx.fillRect(gateX + 6,  gateY + 13, 58, 2);
-
-    // 2階部分
-    ctx.fillStyle = "#F5F5F5";
-    ctx.fillRect(gateX + 16, gateY + 5, 38, 7);
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(gateX + 16, gateY + 5, 3, 7);
-    ctx.fillRect(gateX + 51, gateY + 5, 3, 7);
-    ctx.fillRect(gateX + 14, gateY + 10, 42, 2);
-
-    // 1階部分
-    ctx.fillStyle = "#3E2723";
-    ctx.fillRect(gateX + 26, gateY + 18, 18, 26);
-
-    ctx.fillStyle = "#F5F5F5";
-    ctx.fillRect(gateX + 12, gateY + 18, 14, 26);
-    ctx.fillRect(gateX + 44, gateY + 18, 14, 26);
-
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(gateX + 11, gateY + 18, 3, 26);
-    ctx.fillRect(gateX + 24, gateY + 18, 3, 26);
-    ctx.fillRect(gateX + 43, gateY + 18, 3, 26);
-    ctx.fillRect(gateX + 56, gateY + 18, 3, 26);
-    ctx.fillRect(gateX + 11, gateY + 25, 48, 3);
-
-    // 扁額と提灯
-    ctx.fillStyle = "#111111";
-    ctx.fillRect(gateX + 31, gateY + 19, 8, 5);
-    ctx.fillStyle = "#FFEB3B";
-    ctx.fillRect(gateX + 33, gateY + 26, 4, 6);
-
-    // 石段
-    ctx.fillStyle = "#9E9E9E";
-    ctx.fillRect(gateX + 8,  gateY + 44, 54, 4);
-
-    // ---------------------------------
-    // 5. 仁王門 ↔ 中腹のお寺 をつなぐロープウェイ
-    // ---------------------------------
-    const startX = gateX + 35;      // 仁王門の中央
-    const startY = gateY + 6;       // 仁王門の2階
-    const endX   = midTempleX + 26; // 山の中腹のお寺の右端
-    const endY   = midTempleY + 10; // 山の中腹のお寺の土台付近
-
-    // ケーブル
-    ctx.strokeStyle = "#222222";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-
-    // ゴンドラ（緑の森林帯の上あたりを移動中）
-    const ratio = 0.45;
-    const gondolaX = startX + (endX - startX) * ratio - 7;
-    const gondolaY = startY + (endY - startY) * ratio + 6;
-
-    // 懸垂器
-    ctx.fillStyle = "#222222";
-    ctx.fillRect(gondolaX + 6, gondolaY - 6, 2, 6);
-    ctx.fillRect(gondolaX + 3, gondolaY - 7, 8, 2);
-
-    // ゴンドラ本体
-    ctx.fillStyle = "#D9381E";
-    ctx.fillRect(gondolaX, gondolaY, 14, 9);
-    ctx.fillStyle = "#E0F7FA";
-    ctx.fillRect(gondolaX + 2, gondolaY + 2, 4, 3);
-    ctx.fillRect(gondolaX + 8, gondolaY + 2, 4, 3);
-
-        // =================================================================
-    // 最終仕上げ：明かりの灯った石灯籠（石畳の上端ラインに3基配置）
-    // =================================================================
-    const lanternPositions = [
-        130, // 1基目：鳥居の右側
-        255, // 2基目：中央やや右（仁王門の手前あたり）
-        380  // 3基目：右端（お地蔵様の下あたり）
-    ];
-    const lanternBaseY = canvas.height - 72; // 石畳の上から少し入ったライン（足元）
-
-    lanternPositions.forEach(lx => {
-        // 1. ほんのり広がる温かい光のオーラ（半透明の黄色）
-        ctx.fillStyle = "rgba(255, 224, 102, 0.28)";
-        ctx.beginPath();
-        ctx.arc(lx, lanternBaseY - 19, 13, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 2. 基礎・竿（さお：柱）・中台（石のグレー）
-        ctx.fillStyle = "#757575";
-        ctx.fillRect(lx - 6, lanternBaseY - 3, 12, 3);  // 土台
-        ctx.fillStyle = "#9E9E9E";
-        ctx.fillRect(lx - 2, lanternBaseY - 14, 4, 11);  // 竿（柱）
-        ctx.fillStyle = "#757575";
-        ctx.fillRect(lx - 5, lanternBaseY - 16, 10, 2);  // 中台（火袋の受け皿）
-
-        // 3. 火袋（ひぶくろ：明かりが灯る部分）
-        ctx.fillStyle = "#FFA000"; // 外枠のオレンジ光
-        ctx.fillRect(lx - 4, lanternBaseY - 22, 8, 6);
-        ctx.fillStyle = "#FFF59D"; // 中心の明るい芯の光
-        ctx.fillRect(lx - 2, lanternBaseY - 21, 4, 4);
-
-        // 4. 笠（かさ：三角屋根）と宝珠（てっぺんの飾り）
-        ctx.fillStyle = "#616161";
-        ctx.fillRect(lx - 7, lanternBaseY - 24, 14, 2); // 笠の下段
-        ctx.fillRect(lx - 4, lanternBaseY - 26, 8, 2);  // 笠の上段
-        ctx.fillStyle = "#9E9E9E";
-        ctx.fillRect(lx - 1, lanternBaseY - 28, 2, 2);  // 宝珠
-    });
-
 
     // ==================================
     // 雲
