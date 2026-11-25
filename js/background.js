@@ -9,6 +9,50 @@ let leafOffset = 0;
 //昼・夕方・夜
 let timeOfDay = "day";
 
+// ★追加：季節（"normal" | "autumn" | "winter"）
+let season = "normal";
+
+// ★追加：季節ごとのカラーパレット一括管理
+const SEASON_THEMES = {
+    // 通常の緑（夏・新緑）
+    normal: {
+        mountain: { main: "#263c22", far: "#4e7f46", front: "#3a6b35" },
+        base: "#2b4a26",
+        forest: { far: "#356835", mid: "#2a5d2a", front: "#1f4f1f" }
+    },
+    // ① 紅葉（秋）
+    autumn: {
+        mountain: { main: "#5c1d16", far: "#d97228", front: "#9e351b" },
+        base: "#4a2816",
+        forest: { far: "#7a3b1e", mid: "#592b15", front: "#3d1e10" }
+    },
+    // ② 雪山（冬）
+    winter: {
+        mountain: { main: "#7a92a8", far: "#eef4f8", front: "#b8cce0" },
+        base: "#cfdbe6",
+        forest: { far: "#dce8f2", mid: "#a3b8cc", front: "#566b7d" }
+    },
+
+      // ③ 桜・春（spring）上品な和風の桜色に調整
+    spring: {
+        mountain: {
+            main:  "#486b46", // 主峰（春の山肌・落ち着いた若草緑）
+            far:   "#f4c2d7", // 遠くの山（淡く優しいソメイヨシノ色）
+            front: "#d88ea8"  // 手前の山（彩度を落とした上品な紅梅色）
+        },
+        base: "#3e6338",      // ベース下地（春の若草緑）
+        forest: {
+            far:   "#e8a8c0", // 奥森（遠景に咲く桜並木の淡いピンク）
+            mid:   "#558246", // 後ろ側の森（芽吹いた新緑の緑）
+            front: "#264d24"  // 一番手前の森（濃い緑に戻して五重塔と川を引き締める）
+        }
+    }
+
+
+};
+
+
+
 function updateBackground() {
 
     cloudOffset += 0.5
@@ -21,7 +65,7 @@ function drawBackground() {
     // ============================
     // 時間帯制御
     // ============================
-    const cycle = Math.floor(currentStageIndex / 3) % 3;
+    const cycle = currentStageIndex % 3; //変更
 
     if (cycle === 0) {
         timeOfDay = "day";
@@ -130,10 +174,28 @@ function drawBackground() {
 
     }
 
-    /*ctx.fillStyle = skyColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);*/
+    // ★追加：季節制御（仮：9ステージごとに 緑 → 紅葉 → 雪山 と切り替え）
+    const seasonCycle = Math.floor(currentStageIndex / 3) % 4;
+    if (seasonCycle === 0) {
+        season = "normal";
+    } else if (seasonCycle === 1) {
+        season = "autumn";
+    } else if (seasonCycle === 2) {
+        season = "winter";
+    } else {
+        season = "spring"; //春を追加
+    }
+
+    // ★追加：今の季節のカラーセットを取り出す（これ以降ずっと theme を使います）
+    const theme = SEASON_THEMES[season];
+    // ★ここに移動！毎フレーム・毎ステージ正しく更新されるようになります
+    let farMountainColor = theme.mountain.far;
+    if (timeOfDay === "evening" && season === "autumn") {
+        farMountainColor = "#4e7f46"; // 夕方 × 紅葉 のときだけ緑のアクセント
+    }
+
     //山
-    ctx.fillStyle = "#263c22";
+    ctx.fillStyle = theme.mountain.main //変更箇所
     //左の山
     ctx.beginPath();
     ctx.moveTo(-50, 280);
@@ -157,7 +219,7 @@ function drawBackground() {
     //　遠くの山
     // ========================
 
-    ctx.fillStyle = "#4e7f46";
+    ctx.fillStyle = farMountainColor; //変更箇所
 
     for (let x = -50; x < canvas.width + 100; x += 80) {
 
@@ -172,7 +234,7 @@ function drawBackground() {
     // =====================
     // 手前の山
     // =====================
-    ctx.fillStyle = "#3a6b35";
+    ctx.fillStyle = theme.mountain.front; //変更箇所
 
     // 数を減らして主峰を目立たせる
     const frontMountains = [
@@ -192,28 +254,184 @@ function drawBackground() {
         ctx.fill();
 
     });
+
+    // =====================
+    // のぼり描画用ヘルパー関数
+    // =====================
+    function drawNobori(x, y, scale = 1.0) {
+        const w = 9 * scale;
+        const h = 30 * scale;
+        const poleH = 45 * scale;
+
+        // 竿（ポール）
+        ctx.fillStyle = "#555555";
+        ctx.fillRect(x, y, 3 * scale, poleH);
+        ctx.fillRect(x, y + 2 * scale, 12 * scale, 2 * scale);
+
+        // 旗（白）
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 3 * scale, y + 4 * scale, w, h);
+
+        // 模様（黒ドット）
+        ctx.fillStyle = "#333333";
+        ctx.fillRect(x + 6 * scale, y + 9 * scale, 3 * scale, 3 * scale);
+        ctx.fillRect(x + 6 * scale, y + 16 * scale, 3 * scale, 3 * scale);
+    }
+
+    // 1. 左側の柱の横ののぼり（既存）
+    drawNobori(72, 230, 1.0);
+
+    // 2. 鳥居周辺ののぼり（3本・鳥居より少し小さめにして遠近感を出す）
+    drawNobori(262, 218, 0.85); // 鳥居のすぐ左
+    drawNobori(274, 224, 0.85); // 鳥居の左手前
+    drawNobori(332, 220, 0.85); // 鳥居のすぐ右
+    drawNobori(344, 226, 0.85); // ★追加：鳥居の右手前（左と同じく右に+12、下に+6ずらす
+
+    // 3. 「鳥居」（のぼりの手前に描画）
+    function drawTorii(x, y, w, h) {
+        // 柱（朱色）
+        ctx.fillStyle = "#c83232";
+        ctx.fillRect(x + w * 0.15, y + h * 0.3, w * 0.12, h * 0.7);
+        ctx.fillRect(x + w * 0.73, y + h * 0.3, w * 0.12, h * 0.7);
+        // 貫（横木）
+        ctx.fillRect(x + w * 0.08, y + h * 0.45, w * 0.84, h * 0.14);
+        // 額束（中央の白）
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + w * 0.43, y + h * 0.3, w * 0.14, h * 0.25);
+        // 笠木（黒屋根）
+        ctx.fillStyle = "#222831";
+        ctx.fillRect(x, y, w, h * 0.22);
+        // 島木（黄色のライン）
+        ctx.fillStyle = "#f2c94c";
+        ctx.fillRect(x + w * 0.05, y + h * 0.22, w * 0.9, h * 0.08);
+    }
+
+    drawTorii(285, 222, 42, 26);
+
+
+
     // =====================
     // 山道・地面のベース（追加）
     // =====================
-    // 1. 山の裾野から石畳までのベース（深い緑や土色など）
-    ctx.fillStyle = "#2b4a26"; // 山の裾野になじむ濃い緑（土色にするなら "#6b543a" など）
+
+    // 1. 山の裾野から石畳までのベース
+    ctx.fillStyle = theme.base;
     ctx.fillRect(0, 280, canvas.width, canvas.height - 280);
+
     // 2. 少し川を流す（2段目のギザギザ木々のすぐ下あたり）
-    ctx.fillStyle = "#1E5282"; // 空と同じ爽やかな青（少し濃い川色なら "#2d6ca2"）
-    ctx.fillRect(0, 395, canvas.width, 70); // 高さ35pxの細めの川
+    ctx.fillStyle = "#1E5282";
+    ctx.fillRect(0, 395, canvas.width, 70);
 
-    // 川の水面のキラキラ（白い細い線を入れて川らしさを出す）
-    ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
-    ctx.fillRect(40, 405, 50, 2);
-    ctx.fillRect(180, 415, 70, 2);
-    ctx.fillRect(260, 402, 40, 2);
-    ctx.fillRect(90, 448, 60, 2);  // 追加
-    ctx.fillRect(210, 452, 45, 2); // 追加
+    // 水面のグラデーション（奥は明るく、手前は深く）
+    const riverGrad = ctx.createLinearGradient(0, 395, 0, 465);
+    riverGrad.addColorStop(0, "rgba(120, 200, 255, 0.25)");
+    riverGrad.addColorStop(0.5, "rgba(255, 255, 255, 0.05)");
+    riverGrad.addColorStop(1, "rgba(10, 25, 50, 0.25)");
+    ctx.fillStyle = riverGrad;
+    ctx.fillRect(0, 395, canvas.width, 70);
 
+    // 右上の太陽（x: 310付近）の水面反射（サンロード）
+    const sunReflections = [
+        { x: 292, y: 400, w: 32, color: "rgba(255, 235, 160, 0.45)" },
+        { x: 282, y: 409, w: 48, color: "rgba(255, 215, 130, 0.35)" },
+        { x: 290, y: 420, w: 40, color: "rgba(255, 245, 190, 0.30)" },
+        { x: 278, y: 433, w: 56, color: "rgba(255, 255, 255, 0.25)" },
+        { x: 295, y: 447, w: 34, color: "rgba(255, 225, 150, 0.22)" },
+        { x: 288, y: 458, w: 42, color: "rgba(255, 255, 255, 0.18)" }
+    ];
+    sunReflections.forEach(ref => {
+        ctx.fillStyle = ref.color;
+        ctx.fillRect(ref.x, ref.y, ref.w, 2);
+    });
 
-    // 2. 山道（土の道）の表現（お好みで追加）
-    ctx.fillStyle = "#8c7355"; // 土の色
-    ctx.fillRect(0, 465, canvas.width, 75); // Y=380あたりから石畳までを道にする例
+    // 川の水面のキラキラ（大小の光の線＋光るドット粒）
+    const sparkles = [
+        { x: 40, y: 405, w: 50, alpha: 0.55 },
+        { x: 115, y: 412, w: 18, alpha: 0.80 },
+        { x: 180, y: 415, w: 70, alpha: 0.50 },
+        { x: 260, y: 402, w: 40, alpha: 0.65 },
+        { x: 365, y: 410, w: 45, alpha: 0.60 },
+        { x: 65, y: 430, w: 25, alpha: 0.75 },
+        { x: 145, y: 438, w: 35, alpha: 0.55 },
+        { x: 350, y: 435, w: 20, alpha: 0.85 },
+        { x: 90, y: 448, w: 60, alpha: 0.50 },
+        { x: 210, y: 452, w: 45, alpha: 0.65 },
+        { x: 380, y: 455, w: 30, alpha: 0.70 }
+    ];
+
+    sparkles.forEach(s => {
+        // 光の帯
+        ctx.fillStyle = `rgba(220, 245, 255, ${s.alpha})`;
+        ctx.fillRect(s.x, s.y, s.w, 2);
+
+        // 端にキラッと光る白い粒（ドット）を追加
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.fillRect(s.x + s.w + 4, s.y, 3, 2);
+    });
+
+    // 2. 山道（土の道／冬は雪道）の表現
+    if (season === "winter") {
+        // 冬：雪が積もった道（少し青みがかった白）
+        ctx.fillStyle = "#e3edf5";
+        ctx.fillRect(0, 465, canvas.width, 75);
+
+        // 雪の陰影や踏み跡のアクセント
+        ctx.fillStyle = "#c5d6e6";
+        ctx.fillRect(0, 465, canvas.width, 4); // 川岸の雪のフチ
+        ctx.fillRect(40, 490, 50, 3);
+        ctx.fillRect(160, 515, 70, 3);
+        ctx.fillRect(290, 485, 45, 3);
+    } else {
+        // 通常・秋：土の道
+        ctx.fillStyle = "#8c7355";
+        ctx.fillRect(0, 465, canvas.width, 75);
+    }
+
+        // =====================
+    // 冬の動物：雪道のキツネ（追加）
+    // =====================
+    function drawFox(x, y) {
+        // 尻尾の揺れアニメーション（leafOffsetを利用）
+        const tailWag = Math.sin(leafOffset * 0.04) * 1.5;
+
+        // 1. ふわふわの尻尾（オレンジ＋先端が白）
+        ctx.fillStyle = "#e66c2c";
+        ctx.fillRect(x - 10, y - 9 + tailWag, 9, 6);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x - 12, y - 10 + tailWag, 4, 5);
+
+        // 2. 体（お座りしている胴体）
+        ctx.fillStyle = "#e66c2c";
+        ctx.fillRect(x - 3, y - 12, 9, 12);
+
+        // 胸元の白いモフモフ
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 3, y - 10, 3, 8);
+
+        // 3. 頭と耳
+        ctx.fillStyle = "#e66c2c";
+        ctx.fillRect(x - 2, y - 19, 10, 8);
+        // ピンと立った三角の耳（2つ）
+        ctx.fillRect(x - 1, y - 22, 3, 3);
+        ctx.fillRect(x + 4, y - 22, 3, 3);
+        // 耳の先の黒アクセント
+        ctx.fillStyle = "#222222";
+        ctx.fillRect(x - 1, y - 22, 2, 1.5);
+        ctx.fillRect(x + 5, y - 22, 2, 1.5);
+
+        // 4. 顔の白い頬と目・鼻
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 3, y - 15, 5, 4); // 白い口元
+        ctx.fillStyle = "#111111";
+        ctx.fillRect(x + 4, y - 17, 2, 2); // つぶらな瞳
+        ctx.fillRect(x + 8, y - 15, 2, 2); // 黒い鼻先
+    }
+
+    // 冬のステージのときだけ、お茶所の近くにキツネを登場させる
+    if (season === "winter") {
+        drawFox(165, 512); // お茶所（X=210）の少し左側に配置
+    }
+
     // =====================
     // 川の下のお茶所・休憩所（追加）
     // =====================
@@ -255,7 +473,7 @@ function drawBackground() {
     // ※川と石畳の間の茶色いエリアに収まるようにY座標を調整してください
     drawChaya(210, 515);
 
-        // =====================
+    // =====================
     // 左端の屋根付き休憩小屋（東屋・追加）
     // =====================
     function drawAzumaya(x, y) {
@@ -325,7 +543,7 @@ function drawBackground() {
     // =====================
     // 奥森（一番奥の木々）
     // =====================
-    ctx.fillStyle = "#356835";
+    ctx.fillStyle = theme.forest.far;
     for (let x = -15; x < canvas.width; x += 30) {
         ctx.beginPath();
         ctx.moveTo(x, 320);
@@ -337,7 +555,7 @@ function drawBackground() {
     // =====================
     // 後ろ側の森
     // =====================
-    ctx.fillStyle = "#2a5d2a";
+    ctx.fillStyle = theme.forest.mid;
     for (let x = -15; x < canvas.width; x += 30) {
         ctx.beginPath();
         ctx.moveTo(x, 380);
@@ -345,6 +563,24 @@ function drawBackground() {
         ctx.lineTo(x + 30, 380);
         ctx.fill();
     }
+
+    // 後ろ側の森（Y=380）より手前に描画し、Y=388に配置
+    drawGojunoto(15, 388, "wood");                  // 左端：木造の五重塔
+    drawGojunoto(canvas.width - 59, 388, "red");    // 右端：赤系と白系の五重塔
+
+    // =====================
+    // 一番手前の森（塔の足元が少し隠れて自然になじむ）
+    // =====================
+    ctx.fillStyle = theme.forest.front;
+    for (let x = 0; x < canvas.width; x += 30) {
+        const height = (x / 30) % 2 === 0 ? 20 : 35;
+        ctx.beginPath();
+        ctx.moveTo(x, 400);
+        ctx.lineTo(x + 15, 400 - height);
+        ctx.lineTo(x + 30, 400);
+        ctx.fill();
+    }
+
 
     // =====================
     // 山のふもとの五重塔（森の間に配置！）
@@ -372,7 +608,7 @@ function drawBackground() {
         for (let i = 0; i < 5; i++) {
             const layerY = y - 5 - (i * 13);
             const shrink = i * 2.5;
-            
+
             const wallW = 28 - shrink;
             const wallX = x + 22 - (wallW / 2);
             const roofW = 42 - (shrink * 1.2);
@@ -411,7 +647,7 @@ function drawBackground() {
     // =====================
     // 一番手前の森（塔の足元が少し隠れて自然になじむ）
     // =====================
-    ctx.fillStyle = "#1f4f1f";
+    ctx.fillStyle = theme.mountain.front; //変更箇所
     for (let x = 0; x < canvas.width; x += 30) {
         const height = (x / 30) % 2 === 0 ? 20 : 35;
         ctx.beginPath();
@@ -419,6 +655,61 @@ function drawBackground() {
         ctx.lineTo(x + 15, 400 - height);
         ctx.lineTo(x + 30, 400);
         ctx.fill();
+    }
+    // ススキ描画関数（x, y は根元の座標、scale は大きさ倍率）
+    function drawSusuki(x, y, scale = 1.0) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+
+        // 風で少し揺れる動き（leafOffsetを利用）
+        const sway = Math.sin(leafOffset * 0.05 + x) * 2;
+
+        // 茎（3本：左・中央・右に広がる）
+        ctx.strokeStyle = "#8c6239";
+        ctx.lineWidth = 1.5;
+
+        // 左の茎
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(-4, -10, -8 + sway, -18);
+        ctx.stroke();
+
+        // 中央の茎
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(0, -12, 1 + sway, -24);
+        ctx.stroke();
+
+        // 右の茎
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(4, -10, 9 + sway, -19);
+        ctx.stroke();
+
+        // 穂（黄金色・クリーム色のふわふわした先端）
+        ctx.fillStyle = "#f2d16b";
+        ctx.fillRect(-11 + sway, -22, 5, 7); // 左の穂
+        ctx.fillRect(-1 + sway, -28, 5, 8);  // 中央の穂
+        ctx.fillRect(7 + sway, -23, 5, 7);   // 右の穂
+
+        // ハイライト（穂の先端を少し明るく）
+        ctx.fillStyle = "#fff5cc";
+        ctx.fillRect(-10 + sway, -22, 3, 3);
+        ctx.fillRect(0 + sway, -28, 3, 4);
+        ctx.fillRect(8 + sway, -23, 3, 3);
+
+        ctx.restore();
+    }
+
+    // 変更箇所:秋の時だけススキを描画する
+    if (season === "autumn") {
+        drawSusuki(45, 402, 0.9);
+        drawSusuki(65, 403, 1.1);
+        drawSusuki(120, 401, 0.85);
+        drawSusuki(280, 402, 1.0);
+        drawSusuki(305, 403, 0.9);
+        drawSusuki(360, 401, 1.05);
     }
 
 
@@ -462,7 +753,7 @@ function drawBackground() {
         10
     );
 
-        // =====================
+    // =====================
     // 1. 真ん中の山頂のお寺（本堂）
     // =====================
     function drawMountainTemple(x, y) {
@@ -583,7 +874,7 @@ function drawBackground() {
         ctx.fillRect(gx + 3, gy + 8, 3, 3);
     }
 
-      // --- 配置の実行 ---
+    // --- 配置の実行 ---
     // 1. 真ん中の山の頂上付近にお寺を配置
     const templeX = canvas.width / 2;
     const templeY = 115;
@@ -741,44 +1032,80 @@ function drawBackground() {
     ctx.fillRect(45, cloudY4 + 16, 30, 6);
 
     // ===================================
-    // 落ち葉
+    // 季節ごとの舞い散るエフェクト（若葉/ホタル・落ち葉・雪・桜の花びら）
     // ===================================
-    ctx.fillStyle = "#b87733";
+    let particleColor1 = "#b87733"; // デフォルト（秋）：茶色の落ち葉
+    let particleColor2 = "#d4a017"; // デフォルト（秋）：黄金色の落ち葉
+    let pWidth = 8;
+    let pHeight = 5;
+
+    if (season === "normal") {
+        if (timeOfDay === "night") {
+            // 通常・夜：幻想的なホタルの光
+            particleColor1 = "#ccff90";
+            particleColor2 = "#ffff8d";
+            pWidth = 4;
+            pHeight = 4;
+        } else {
+            // 通常・昼/夕方：爽やかな青葉（若葉）と黄色い蝶々
+            particleColor1 = "#7cb342"; // 新緑の若葉
+            particleColor2 = "#ffee58"; // モンキチョウの黄色
+            pWidth = 7;
+            pHeight = 5;
+        }
+    } else if (season === "spring") {
+        // 春：淡い桜ピンクと濃い桜ピンクの花びら
+        particleColor1 = "#ffb7c5";
+        particleColor2 = "#ff8fa3";
+        pWidth = 6;
+        pHeight = 4;
+    } else if (season === "winter") {
+        // 冬：白と淡い氷色の粉雪
+        particleColor1 = "#ffffff";
+        particleColor2 = "#e1f5fe";
+        pWidth = 4;
+        pHeight = 4;
+    }
+
+    // 1グループ目（3枚）
+    ctx.fillStyle = particleColor1;
 
     ctx.fillRect(
         60,
         (100 + leafOffset) % canvas.height,
-        8,
-        5
+        pWidth,
+        pHeight
     );
 
     ctx.fillRect(
         220,
         (260 + leafOffset) % canvas.height,
-        10,
-        6
+        pWidth + 2,
+        pHeight + 1
     );
 
     ctx.fillRect(
         320,
         (420 + leafOffset) % canvas.height,
-        8,
-        5
+        pWidth,
+        pHeight
     );
 
-    ctx.fillStyle = "#d4a017";
+    // 2グループ目（2枚）
+    ctx.fillStyle = particleColor2;
 
     ctx.fillRect(
         140,
         (180 + leafOffset) % canvas.height,
-        8,
-        5
+        pWidth,
+        pHeight
     );
 
     ctx.fillRect(
         280,
         (340 + leafOffset) % canvas.height,
-        10,
-        6
+        pWidth + 2,
+        pHeight + 1
     );
+
 }
