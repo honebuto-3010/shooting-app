@@ -63,12 +63,16 @@ function stopAllBGM() {
 }
 
 //========================================
-//SE再生
+// SE再生（連続再生でも音が詰まらずクリアに鳴る改良版）
 //========================================
-function playSE(name) {
+function playSE(name, volume = 1.0) {
 
     if (!se[name]) return;
 
-    se[name].currentTime = 0;
-    se[name].play();
+    // 音声を複製して再生することで、連射や連続撃破でも音が途切れず自然に鳴る
+    const soundClone = se[name].cloneNode();
+    soundClone.volume = se[name].volume * volume; // 元の音量 × 指定倍率
+    soundClone.play().catch(() => {
+        // スマホなどで連続再生制限にかかった場合のエラー防止
+    });
 }
