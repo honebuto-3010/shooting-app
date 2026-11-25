@@ -501,7 +501,7 @@ function animate() {
         for (let j = bullets.length - 1; j >= 0; j--) {
             if (checkCollision(bullets[j], boss) && gateState === "open") {
 
-                playSE("enemyHit"); //仮のBGM設定中
+                playSE("damage", 0.5); //仮のBGM設定中
 
                 bullets.splice(j, 1);
                 boss.hp--;
@@ -631,125 +631,297 @@ function animate() {
         const enemy = enemies[i];
         enemy.y += enemySpeed;
 
+        // ★季節ごとの特殊な動き（秋は落ち葉のように左右にゆらゆら揺れる）
+        if (season === "autumn") {
+            enemy.x += Math.sin(enemy.y * 0.05 + i) * 0.8;
+        }
+
         const centerX = enemy.x + 15;
         const centerY = enemy.y + 15;
 
-        if (timeOfDay === "day") {
-            // --- 【昼】白い笠お化け（一つ目）描画 ---
-            ctx.fillStyle = "#8c583a";
-            ctx.fillRect(centerX - 2, enemy.y + 18, 4, 10);
-            ctx.fillRect(centerX - 5, enemy.y + 27, 10, 3);
+        if (season === "autumn") {
+            // ====================================
+            // ---(秋・紅葉ステージ)落ち葉お化け（木の葉天狗） ----
+            // ====================================
+            const sway = Math.sin(Date.now() * 0.01 + i) * 3;
 
-            ctx.fillStyle = "#5c3a21";
-            ctx.fillRect(centerX - 2, enemy.y, 4, 4);
-
-            ctx.fillStyle = "#ffffff";
-            ctx.strokeStyle = "#adb5bd";
-            ctx.lineWidth = 1.5;
-
+            //左右の紅葉の羽（オレンジの葉っぱ）
+            ctx.fillStyle = "#f27d24";
             ctx.beginPath();
-            ctx.moveTo(centerX, enemy.y + 3);
-            ctx.lineTo(enemy.x + 1, enemy.y + 19);
-            ctx.lineTo(enemy.x + 29, enemy.y + 19);
+            ctx.moveTo(centerX - 6, centerY);
+            ctx.lineTo(centerX - 18, centerY - 6 + sway);
+            ctx.lineTo(centerX - 12, centerY + 6 + sway);
             ctx.closePath();
             ctx.fill();
-            ctx.stroke();
 
-            ctx.fillStyle = "#ffffff";
             ctx.beginPath();
-            ctx.arc(centerX, enemy.y + 12, 4.5, 0, Math.PI * 2);
+            ctx.moveTo(centerX + 6, centerY);
+            ctx.lineTo(centerX + 18, centerY - 6 - sway);
+            ctx.lineTo(centerX + 12, centerY + 6 - sway);
+            ctx.closePath();
             ctx.fill();
-            ctx.stroke();
 
+            // 体（真っ赤なモミジの葉の重なり）
+            ctx.fillStyle = "#d93829";
+            ctx.beginPath();
+            ctx.moveTo(centerX, enemy.y + 2);        // 葉の先端（上）
+            ctx.lineTo(enemy.x + 26, centerY + 2);   // 右の葉先
+            ctx.lineTo(centerX + 6, enemy.y + 28);   // 右下
+            ctx.lineTo(centerX - 6, enemy.y + 28);   // 左下
+            ctx.lineTo(enemy.x + 4, centerY + 2);    // 左の葉先
+            ctx.closePath();
+            ctx.fill();
+
+            // 中心の黄色の葉っぱ模様（アクセント）
+            ctx.fillStyle = "#f2c94c";
+            ctx.fillRect(centerX - 5, centerY - 4, 10, 10);
+
+            // 天狗の小さなお面・目つき
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(centerX - 6, centerY - 3, 4, 4);
+            ctx.fillRect(centerX + 2, centerY - 3, 4, 4);
             ctx.fillStyle = "#111111";
+            ctx.fillRect(centerX - 4, centerY - 2, 2, 2);
+            ctx.fillRect(centerX + 3, centerY - 2, 2, 2);
+
+            // 木の葉天狗の小さな鼻（赤）
+            ctx.fillStyle = "#b71c1c";
+            ctx.fillRect(centerX - 1.5, centerY, 3, 5);
+
+        } else if (season === "winter") {
+            // ==========================================
+            // --- 【冬・雪山ステージ】つらら小僧 ---
+            // ==========================================
+            // 氷のオーラ（冷気）
+            ctx.fillStyle = "rgba(180, 235, 255, 0.25)";
             ctx.beginPath();
-            ctx.arc(centerX, enemy.y + 13, 2, 0, Math.PI * 2);
+            ctx.arc(centerX, centerY, 16, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.fillStyle = "#ff4d4d";
-            ctx.fillRect(centerX + 2, enemy.y + 19, 4, 6);
-
-        } else if (timeOfDay === "evening") {
-            // --- 【夕方】カラス天狗 ---
-            const flap = Math.sin(Date.now() * 0.015) * 4;
-
-            ctx.fillStyle = "#1a1a1a";
+            // 氷柱（つらら）の本体（鋭い逆三角形）
+            ctx.fillStyle = "#4fc3f7";
             ctx.beginPath();
-            ctx.moveTo(centerX - 4, centerY - 2);
-            ctx.lineTo(centerX - 20, centerY - 8 + flap);
-            ctx.lineTo(centerX - 13, centerY + 6 + flap);
+            ctx.moveTo(enemy.x + 4, enemy.y + 5);    // 左上
+            ctx.lineTo(enemy.x + 26, enemy.y + 5);   // 右上
+            ctx.lineTo(centerX, enemy.y + 30);       // 鋭い先端（下）
             ctx.closePath();
             ctx.fill();
 
+            // 氷の透明感・ハイライト（左半分を明るく）
+            ctx.fillStyle = "#b3e5fc";
             ctx.beginPath();
-            ctx.moveTo(centerX + 4, centerY - 2);
-            ctx.lineTo(centerX + 20, centerY - 8 + flap);
-            ctx.lineTo(centerX + 13, centerY + 6 + flap);
+            ctx.moveTo(enemy.x + 6, enemy.y + 6);
+            ctx.lineTo(centerX, enemy.y + 6);
+            ctx.lineTo(centerX, enemy.y + 28);
             ctx.closePath();
             ctx.fill();
 
-            ctx.fillStyle = "#263238";
-            ctx.fillRect(centerX - 6, centerY - 3, 12, 14);
+            // 頭に積もった雪（白い雪帽子）
             ctx.fillStyle = "#ffffff";
-            ctx.fillRect(centerX - 4, centerY, 2, 2);
-            ctx.fillRect(centerX + 2, centerY, 2, 2);
-            ctx.fillRect(centerX - 4, centerY + 5, 2, 2);
-            ctx.fillRect(centerX + 2, centerY + 5, 2, 2);
+            ctx.fillRect(enemy.x + 3, enemy.y + 2, 24, 5);
+            ctx.fillRect(enemy.x + 6, enemy.y, 18, 3);
 
-            ctx.fillStyle = "#111111";
-            ctx.fillRect(centerX - 6, centerY - 12, 12, 9);
-
-            ctx.fillStyle = "#d32f2f";
-            ctx.fillRect(centerX - 3, centerY - 16, 6, 4);
-
+            // 鋭い目つき（黒目＋白い光）
+            ctx.fillStyle = "#01579b";
+            ctx.fillRect(centerX - 6, centerY - 4, 4, 4);
+            ctx.fillRect(centerX + 2, centerY - 4, 4, 4);
             ctx.fillStyle = "#ffffff";
-            ctx.fillRect(centerX - 4, centerY - 10, 3, 2);
-            ctx.fillRect(centerX + 1, centerY - 10, 3, 2);
+            ctx.fillRect(centerX - 5, centerY - 3, 1.5, 1.5);
+            ctx.fillRect(centerX + 3, centerY - 3, 1.5, 1.5);
+
+            // ギザギザの口（寒そうに震える口）
+            ctx.fillStyle = "#0277bd";
+            ctx.fillRect(centerX - 4, centerY + 3, 8, 2);
+        } else if (season === "spring") {
+            // ==========================================
+            // --- 【春・桜ステージ】ばけ狸（陣笠・鬼火バージョン） ---
+            // ==========================================
+            // 1. 妖しい青い鬼火（周囲をフワフワ浮遊する妖怪の証）
+            const fireY = Math.sin(Date.now() * 0.01 + i) * 3;
+            ctx.fillStyle = "rgba(0, 229, 255, 0.35)";
+            ctx.beginPath();
+            ctx.arc(centerX - 13, centerY - 2 + fireY, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#84ffff";
+            ctx.fillRect(centerX - 14, centerY - 3 + fireY, 2.5, 3);
+
+            // 2. ふわふわの大きな尻尾（後ろ側・左右に少し揺れる）
+            const tailSway = Math.sin(Date.now() * 0.012 + i) * 2;
+            ctx.fillStyle = "#6d4c41";
+            ctx.beginPath();
+            ctx.arc(centerX + 8 + tailSway, centerY + 6, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#3e2723";
+            ctx.fillRect(centerX + 5 + tailSway, centerY + 4, 6, 2);
+
+            // 3. 体（丸っこい茶色の胴体＋ぽんぽこお腹）
+            ctx.fillStyle = "#795548";
+            ctx.fillRect(centerX - 8, centerY - 2, 16, 15);
+            ctx.fillStyle = "#ffe0b2";
+            ctx.fillRect(centerX - 6, centerY + 1, 12, 10);
+
+            // 4. 頭とアイマスク模様
+            ctx.fillStyle = "#795548";
+            ctx.fillRect(centerX - 7, centerY - 10, 14, 9);
+            ctx.fillStyle = "#3e2723";
+            ctx.fillRect(centerX - 6, centerY - 8, 5, 4);
+            ctx.fillRect(centerX + 1, centerY - 8, 5, 4);
+
+            // 吊り上がった妖怪の赤目（怒り目）
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(centerX - 5, centerY - 7, 3, 2.5);
+            ctx.fillRect(centerX + 2, centerY - 7, 3, 2.5);
             ctx.fillStyle = "#ff1744";
-            ctx.fillRect(centerX - 3, centerY - 10, 1.5, 2);
-            ctx.fillRect(centerX + 2, centerY - 10, 1.5, 2);
+            ctx.fillRect(centerX - 4, centerY - 7, 1.5, 2);
+            ctx.fillRect(centerX + 3, centerY - 7, 1.5, 2);
+            // 吊り眉（キリッとした敵の表情）
+            ctx.fillStyle = "#111111";
+            ctx.fillRect(centerX - 5, centerY - 9, 4, 1.5);
+            ctx.fillRect(centerX + 1, centerY - 9, 4, 1.5);
 
-            ctx.fillStyle = "#fbc02d";
+            // 口元と鼻
+            ctx.fillStyle = "#ffe0b2";
+            ctx.fillRect(centerX - 3, centerY - 4, 6, 3);
+            ctx.fillStyle = "#111111";
+            ctx.fillRect(centerX - 1, centerY - 4, 2, 2);
+
+            // 5. 黒塗りの陣笠（じんがさ）＋金色の家紋（★敵キャラ感の決め手！）
+            ctx.fillStyle = "#212121";
             ctx.beginPath();
-            ctx.moveTo(centerX - 3, centerY - 7);
-            ctx.lineTo(centerX + 3, centerY - 7);
-            ctx.lineTo(centerX, centerY - 2);
+            ctx.moveTo(centerX, centerY - 17);       // 陣笠の頂点
+            ctx.lineTo(centerX - 12, centerY - 9);   // 左のツバ
+            ctx.lineTo(centerX + 12, centerY - 9);   // 右のツバ
             ctx.closePath();
             ctx.fill();
+
+            // 陣笠の金色のフチ・紋章
+            ctx.fillStyle = "#fbc02d";
+            ctx.fillRect(centerX - 11, centerY - 10, 22, 1.5);
+            ctx.fillRect(centerX - 1.5, centerY - 14, 3, 3);
 
         } else {
-            // --- 【夜】提灯お化け ---
-            const glow = 0.25 + (Math.sin(Date.now() * 0.008) + 1) * 0.1;
-            ctx.fillStyle = `rgba(255, 190, 50, ${glow})`;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 18, 0, Math.PI * 2);
-            ctx.fill();
+            // ==========================================
+            // --- 【通常・緑ステージ】既存の昼・夕方・夜の妖怪 ---
+            // ==========================================
 
-            ctx.fillStyle = "#e53935";
-            ctx.fillRect(centerX - 10, centerY - 11, 20, 22);
-            ctx.fillStyle = "#ffb300";
-            ctx.fillRect(centerX - 7, centerY - 8, 14, 16);
 
-            ctx.fillStyle = "#212121";
-            ctx.fillRect(centerX - 8, centerY - 14, 16, 3);
-            ctx.fillRect(centerX - 8, centerY + 11, 16, 3);
-            ctx.strokeStyle = "#757575";
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY - 16, 3, 0, Math.PI * 2);
-            ctx.stroke();
+            if (timeOfDay === "day") {
+                // --- 【昼】白い笠お化け（一つ目）描画 ---
+                ctx.fillStyle = "#8c583a";
+                ctx.fillRect(centerX - 2, enemy.y + 18, 4, 10);
+                ctx.fillRect(centerX - 5, enemy.y + 27, 10, 3);
 
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(centerX - 6, centerY - 7, 5, 5);
-            ctx.fillRect(centerX + 1, centerY - 7, 5, 5);
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(centerX - 4, centerY - 5, 2, 2);
-            ctx.fillRect(centerX + 3, centerY - 5, 2, 2);
+                ctx.fillStyle = "#5c3a21";
+                ctx.fillRect(centerX - 2, enemy.y, 4, 4);
 
-            ctx.fillStyle = "#212121";
-            ctx.fillRect(centerX - 7, centerY + 1, 14, 4);
-            ctx.fillStyle = "#ff4081";
-            ctx.fillRect(centerX - 2, centerY + 3, 4, 7);
+                ctx.fillStyle = "#ffffff";
+                ctx.strokeStyle = "#adb5bd";
+                ctx.lineWidth = 1.5;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, enemy.y + 3);
+                ctx.lineTo(enemy.x + 1, enemy.y + 19);
+                ctx.lineTo(enemy.x + 29, enemy.y + 19);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.arc(centerX, enemy.y + 12, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = "#111111";
+                ctx.beginPath();
+                ctx.arc(centerX, enemy.y + 13, 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = "#ff4d4d";
+                ctx.fillRect(centerX + 2, enemy.y + 19, 4, 6);
+
+            } else if (timeOfDay === "evening") {
+                // --- 【夕方】カラス天狗 ---
+                const flap = Math.sin(Date.now() * 0.015) * 4;
+
+                ctx.fillStyle = "#1a1a1a";
+                ctx.beginPath();
+                ctx.moveTo(centerX - 4, centerY - 2);
+                ctx.lineTo(centerX - 20, centerY - 8 + flap);
+                ctx.lineTo(centerX - 13, centerY + 6 + flap);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(centerX + 4, centerY - 2);
+                ctx.lineTo(centerX + 20, centerY - 8 + flap);
+                ctx.lineTo(centerX + 13, centerY + 6 + flap);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = "#263238";
+                ctx.fillRect(centerX - 6, centerY - 3, 12, 14);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(centerX - 4, centerY, 2, 2);
+                ctx.fillRect(centerX + 2, centerY, 2, 2);
+                ctx.fillRect(centerX - 4, centerY + 5, 2, 2);
+                ctx.fillRect(centerX + 2, centerY + 5, 2, 2);
+
+                ctx.fillStyle = "#111111";
+                ctx.fillRect(centerX - 6, centerY - 12, 12, 9);
+
+                ctx.fillStyle = "#d32f2f";
+                ctx.fillRect(centerX - 3, centerY - 16, 6, 4);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(centerX - 4, centerY - 10, 3, 2);
+                ctx.fillRect(centerX + 1, centerY - 10, 3, 2);
+                ctx.fillStyle = "#ff1744";
+                ctx.fillRect(centerX - 3, centerY - 10, 1.5, 2);
+                ctx.fillRect(centerX + 2, centerY - 10, 1.5, 2);
+
+                ctx.fillStyle = "#fbc02d";
+                ctx.beginPath();
+                ctx.moveTo(centerX - 3, centerY - 7);
+                ctx.lineTo(centerX + 3, centerY - 7);
+                ctx.lineTo(centerX, centerY - 2);
+                ctx.closePath();
+                ctx.fill();
+
+            } else {
+                // --- 【夜】提灯お化け ---
+                const glow = 0.25 + (Math.sin(Date.now() * 0.008) + 1) * 0.1;
+                ctx.fillStyle = `rgba(255, 190, 50, ${glow})`;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 18, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = "#e53935";
+                ctx.fillRect(centerX - 10, centerY - 11, 20, 22);
+                ctx.fillStyle = "#ffb300";
+                ctx.fillRect(centerX - 7, centerY - 8, 14, 16);
+
+                ctx.fillStyle = "#212121";
+                ctx.fillRect(centerX - 8, centerY - 14, 16, 3);
+                ctx.fillRect(centerX - 8, centerY + 11, 16, 3);
+                ctx.strokeStyle = "#757575";
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY - 16, 3, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(centerX - 6, centerY - 7, 5, 5);
+                ctx.fillRect(centerX + 1, centerY - 7, 5, 5);
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(centerX - 4, centerY - 5, 2, 2);
+                ctx.fillRect(centerX + 3, centerY - 5, 2, 2);
+
+                ctx.fillStyle = "#212121";
+                ctx.fillRect(centerX - 7, centerY + 1, 14, 4);
+                ctx.fillStyle = "#ff4081";
+                ctx.fillRect(centerX - 2, centerY + 3, 4, 7);
+            }
         }
 
         // プレイヤーとザコ敵の衝突判定
@@ -782,7 +954,7 @@ function animate() {
     // お大師さまの移動と描画（完全に独立！）
     // ==========================================
     for (let i = daishiList.length - 1; i >= 0; i--) {
-        daishiList[i].y += daishiList[i].speed * 3;
+        daishiList[i].y += daishiList[i].speed * 4;
 
         // 笠
         ctx.fillStyle = "#e0b060";
@@ -854,25 +1026,26 @@ function animate() {
     }
 }
 
-    // 初期化を行ってからループアニメーションを開始
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+// 初期化を行ってからループアニメーションを開始
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
-    if (
-        params.get("continue") === "true"
-    ) {
+if (
+    params.get("continue") === "true"
+) {
 
-        loadGame();
+    loadGame();
 
-    } else {
+} else {
 
-        resetGame(true);
+    resetGame(true);
 
-    }
+}
 
-    playBGM("stage");
+playBGM("stage");
 
-    animate();
+animate();
+
 
